@@ -18,21 +18,36 @@ api = Api(app)
 CORS(app)
 
 
+def parseJSON(headers, datasource):
+    json_data = []
+    for result in datasource:
+        json_data.append(dict(zip(headers, result)))
+    final = json.dumps(json_data)
+    return final
+
+
+class Modulo(Resource):
+    def get(self, id):
+        cur = mysql.get_db().cursor()
+        cur.execute("Select * from modulo where id= %s", (id,))
+        row_headers = [x[0] for x in cur.description]
+        datos = cur.fetchall()
+        final = parseJSON(row_headers, datos)
+        return json.loads(final)
+
+
 class Modulos(Resource):
     def get(self):
         cur = mysql.get_db().cursor()
         cur.execute("Select * from modulo")
         row_headers = [x[0] for x in cur.description]
-        string = cur.fetchall()
-        json_data = []
-        for result in string:
-            json_data.append(dict(zip(row_headers, result)))
-        finalstring = json.dumps(json_data)
-        return json.loads(finalstring)
+        datos = cur.fetchall()
+        final=parseJSON(row_headers,datos)
+        return json.loads(final)
 
 
 api.add_resource(Modulos, '/modulos')
-
+api.add_resource(Modulo, '/modulos/<int:id>')
 
 if __name__ == '__main__':
     app.run()
