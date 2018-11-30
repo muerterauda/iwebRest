@@ -17,9 +17,9 @@ class Database():
         app.config['MYSQL_DATABASE_DB'] = 'iweb'
         mysql = MySQL()
         mysql.init_app(app)
-        api = Api(app)
+        self.api = Api(app)
         CORS(app)
-        cursor = mysql.get_db().cursor()
+        self.cursor = mysql.get_db().cursor()
 
     def get_cursor(self):
         return self.cursor
