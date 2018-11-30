@@ -35,6 +35,7 @@ class Modulo(Resource):
 
 
 class Modulos(Resource):
+
     def get(self):
         cur = mysql.get_db().cursor()
         cur.execute("Select * from modulo")

@@ -1,9 +1,18 @@
-import os
-import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
+import entidades.database
+from flask_restful import Resource
+import json
+import entidades.util
 
-def conectar():
-    return conn.execute("SELECT * from modulo")
+class Modulo(Resource):
+
+    cur = entidades.database.cursor
+    headers = None
+
+    @entidades.database.app.route("/modulos", methods=['GET'])
+    def get_all(self):
+        self.cur.execute("SELECT * FROM MODULO")
+        if self.headers != None:
+            self.headers = [x[0] for x in self.cur.description]
+
+        datos = self.cur.fetchall()
+        return json.loads(entidades.util.parseJSON(self.headers, datos))
