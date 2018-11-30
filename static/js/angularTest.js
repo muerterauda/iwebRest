@@ -82,17 +82,29 @@ app.controller('controllerTest', function ($scope, $http,$location, $route, most
     };
     $scope.sortType     = 'nombre';
     $scope.sortReverse  = false;
+    $scope.sortTypeC    = 'id';
+    $scope.sortReverseC  = false;
     $http.get(url, config).then(function (response) {
         $scope.lista=response.data;
     }, function (response) {
     });
-    $scope.cambiarIcono =function(valor){
-        if(valor===$scope.sortType){
+    $scope.cambiarIcono =function(valor, procedencia){
+        if(procedencia===0){
+             if(valor===$scope.sortType){
             $scope.sortReverse  = !$scope.sortReverse;
         }else{
             $scope.sortType =  valor;
             $scope.sortReverse  = false;
         }
+        }else if(procedencia===1){
+             if(valor===$scope.sortTypeC){
+            $scope.sortReverseC  = !$scope.sortReverseC;
+        }else{
+            $scope.sortTypeC =  valor;
+            $scope.sortReverseC  = false;
+        }
+        }
+
     };
     $scope.mostrarCampanas=function (id) {
         if(mostrarCampanasModulo.findModulo(id)===-1){
