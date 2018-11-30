@@ -6,17 +6,16 @@ from flask_cors import CORS
 
 class Database:
 
-    def __init__(self):
-        self._app = Flask(__name__)
-        self._app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-        self._app.config['MYSQL_DATABASE_USER'] = 'iweb'
-        self._app.config['MYSQL_DATABASE_PASSWORD'] = 'iweb'
-        self._app.config['MYSQL_DATABASE_DB'] = 'iweb'
+    def __init__(self, app):
+        app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+        app.config['MYSQL_DATABASE_USER'] = 'iweb'
+        app.config['MYSQL_DATABASE_PASSWORD'] = 'iweb'
+        app.config['MYSQL_DATABASE_DB'] = 'iweb'
         mysql = MySQL()
-        mysql.init_app(self._app)
-        self._api = Api(self._app)
-        CORS(self._app)
-        self._cursor = mysql.get_db().cursor()
+        mysql.init_app(app)
+        self._api = Api(app)
+        CORS(app)
+        self._cursor = mysql.connect().cursor()
 
     @property
     def cursor(self):
@@ -29,4 +28,3 @@ class Database:
     @property
     def app(self):
         return self._app
-
