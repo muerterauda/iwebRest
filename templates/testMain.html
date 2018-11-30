@@ -1,0 +1,49 @@
+<div class="container">
+            <button ng-click="addModulo()">Crear Modulo</button>
+            <button>Find all</button>
+             <table class="table table-striped">
+                 <tr>
+                    <th scope="col">
+                    <a href="#" ng-click="cambiarIcono('nombre')">Nombre
+                    </a>
+                    <span ng-show="!sortReverse && sortType=='nombre'" class="fa fa-caret-down"></span>
+                    <span ng-show="sortReverse && sortType=='nombre'" class="fa fa-caret-up"></span>
+                </th>
+                <th scope="col">
+                    <a href="#" ng-click="cambiarIcono('alfa')">Alfa
+                    </a>
+                    <span ng-show="!sortReverse && sortType=='alfa'" class="fa fa-caret-down"></span>
+                    <span ng-show="sortReverse && sortType=='alfa'" class="fa fa-caret-up"></span>
+                </th>
+                <th scope="col">
+                    <a href="#" ng-click="cambiarIcono('beta')">Beta
+                    </a>
+                    <span ng-show="!sortReverse && sortType=='beta'" class="fa fa-caret-down"></span>
+                    <span ng-show="sortReverse && sortType=='beta'" class="fa fa-caret-up"></span>
+                </th>
+                     <th scope="col">
+                    <a href="#" ng-click="cambiarIcono('gamma')">Gamma
+                    </a>
+                    <span ng-show="!sortReverse && sortType=='gamma'" class="fa fa-caret-down"></span>
+                    <span ng-show="sortReverse && sortType=='gamma'" class="fa fa-caret-up"></span>
+                </th>
+                     <th scope="col">
+                    <a href="#" ng-click="cambiarIcono('kappa')">Kappa
+                    </a>
+                    <span ng-show="!sortReverse && sortType=='kappa'" class="fa fa-caret-down"></span>
+                    <span ng-show="sortReverse && sortType=='kappa'" class="fa fa-caret-up"></span>
+                </th>
+            </tr>
+                <tbody>
+                <tr ng-repeat="modulo in lista|orderBy:sortType:sortReverse track by modulo.id">
+                    <th scope="row">{{modulo.nombre}}</th>
+                    <th scope="row">{{modulo.alfa}}</th>
+                    <th scope="row">{{modulo.beta}}</th>
+                    <th scope="row">{{modulo.gamma}}</th>
+                    <th scope="row">{{modulo.kappa}}</th>
+                    <th scope="row"><a ng-click="editar(id)" class="btn btn-primary" style="color: white">Editar</a></th>
+                    <th scope="row"><a ng-click="borrar(id)" class="btn btn-danger" style="color: white">Borrar</a></th>
+                </tr>
+            </tbody>
+             </table>
+</div>
