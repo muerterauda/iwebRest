@@ -19,6 +19,13 @@ class Modulo(Resource):
 
     @entidades.database.api.route("/modulos", method=['POST'])
     def create(self, nombre, alpha=0, beta=0, gamma=0, kappa=0):
-        self.cur.execute("INSERT INTO MODULO VALUES (%(nombre)s, %(alpha)s, %(beta)s, %(gamma)s, %(kappa)s)")
-        if self.headers is None:
-            self.headers = [x[0] for x in self.cur.description]
+        self.cur.execute("INSERT INTO MODULO VALUES (%s, %s, %s, %s, %s)", (nombre, alpha, beta, gamma, kappa))
+
+    @entidades.database.api.route("/modulos/<int:id>", method=['DELETE'])
+    def delete(self, id):
+        self.cur.execute("DELETE FROM MODULO WHERE id = %s", (id, ))
+
+    @entidades.database.api.route("/modulos/<int:id>", method=['PUT'])
+    def update(self, id, nombre, alpha, beta, gamma, kappa):
+        self.cur.execute("UPDATE MODULO SET nombre = %s, alpha = %s, beta = %s, gamma = %s, kappa = %s WHERE id = %s", (nombre, alpha, beta, gamma, kappa, id))
+
