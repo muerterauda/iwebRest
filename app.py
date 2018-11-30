@@ -1,7 +1,6 @@
 from flask import Flask
 from flaskext.mysql import MySQL
 from flask_restful import Resource, Api
-from flask import render_template
 import json
 from flask_cors import CORS
 
@@ -16,7 +15,6 @@ mysql = MySQL()
 mysql.init_app(app)
 api = Api(app)
 CORS(app)
-
 
 def parseJSON(headers, datasource):
     json_data = []
@@ -37,6 +35,7 @@ class Modulo(Resource):
 
 
 class Modulos(Resource):
+
     def get(self):
         cur = mysql.get_db().cursor()
         cur.execute("Select * from modulo")
