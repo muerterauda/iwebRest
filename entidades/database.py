@@ -5,7 +5,6 @@ from flask_cors import CORS
 
 
 class Database:
-
     cursor = None
     api = None
 
@@ -19,10 +18,9 @@ class Database:
         mysql.init_app(app)
         self.api = Api(app)
         CORS(app)
-        self.cursor = mysql.get_db().cursor()
 
-    def get_cursor(self):
-        return self.cursor
+    def get_mysql(self):
+        return self.mysql
 
     def get_api(self):
         return self.api
