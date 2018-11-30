@@ -29,7 +29,7 @@ def create(): # Crear un modulo con sus parametros (opcionales todos menos nombr
     if (not nombre) and (not alpha) and (not beta) and (not gamma) and (not kappa):
         res = False
     else:
-        n = _db.cursor.execute("INSERT INTO MODULO VALUES (%s, %s, %s, %s, %s)", (nombre, alpha, beta, gamma, kappa))
+        n = _db.cursor.execute("INSERT INTO MODULO VALUES (0, %s, %s, %s, %s, %s)", (nombre, alpha, beta, gamma, kappa))
         if n == 0:
             res = False
     return jsonify(res)
