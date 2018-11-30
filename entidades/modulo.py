@@ -10,8 +10,15 @@ _db = Database(app)
 
 
 @app.route("/modulos", methods=['GET'])
-def get_all(): # Obtener todos los modulos almacenados en el sistema
-    _db.cursor.execute("SELECT * FROM MODULO")
+def get(): # Obtener todos los modulos almacenados en el sistema
+    id = request.values.get("id")
+    nombre = request.values.get("nombre")
+    if not id and not nombre:
+        _db.cursor.execute("SELECT * FROM MODULO")
+    elif not nombre:
+        _db.cursor.execute("SELECT * FROM MODULO WHERE id= %s", (id,))
+    elif not id:
+        _db.cursor.execute("SELECT * FROM MODULO WHERE nombre= %s", (nombre,))
     headers = [x[0] for x in _db.cursor.description]
     datos = _db.cursor.fetchall()
     final = entidades.util.parseJSON(headers, datos)
