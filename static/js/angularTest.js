@@ -62,6 +62,9 @@ app.factory('mostrarCampanasModulo', function ($http) {
         }
         return resetBorrar(id,lista);
     };
+    function restablecerCheckbox(){
+        listaModulosMostrar.listaModulos=[];
+    }
     function findModulo(id){
        return listaModulosMostrar.listaModulos.indexOf(id);
     }
@@ -69,11 +72,13 @@ app.factory('mostrarCampanasModulo', function ($http) {
         findModulo: findModulo,
         anadirModulo: anadir,
         borrarModulo: borrar,
-          anadirCampanas: resetAnadir
+          anadirCampanas: resetAnadir,
+          restablecerCheckbox:restablecerCheckbox
     };
 })
 
 app.controller('controllerTest', function ($scope, $http,$location, $route, mostrarCampanasModulo) {
+    mostrarCampanasModulo.restablecerCheckbox();
     var url = "http://localhost:5000/modulos";
     var config={
         headers:{
