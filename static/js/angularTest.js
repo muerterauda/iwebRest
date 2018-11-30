@@ -4,18 +4,18 @@ app.config(function($routeProvider) {
     $routeProvider
         .when('/addModulo',{
             templateUrl: 'testCrearModulo.html',
-            controller: 'crearModulo'
+            controller: 'controllerModulo'
         })
         .when('/editModulo',{
             templateUrl: 'testEditarModulo.html',
-            controller: 'editModulo'
+            controller: 'controllerModulo'
 
         }).when('/addCampana',{
                 templateUrl: 'testCrearCampana.html',
-                controller: 'crearCampana'
+                controller: 'controllerCampana'
         }).when('/editCampana', {
             templateUrl: 'testEditarCampana',
-            controller: 'editarCampana'
+            controller: 'controllerCampana'
     })
         .otherwise({
             templateUrl: 'testMain.html',
@@ -102,7 +102,7 @@ app.controller('controllerTest', function ($scope, $http,$location, $route, most
     }
 });
 
-app.controller('crearCampana',  function ($scope, $http,$location, $route) {
+app.controller('controllerCampana',  function ($scope, $http,$location, $route) {
     $scope.crearCampana = function(){
         //TODO WEB SERVICE
         $location.path('/testMain.html');
@@ -113,4 +113,27 @@ app.controller('crearCampana',  function ($scope, $http,$location, $route) {
         $location.path('/testMain.html');
         $route.reload();
     }
-})
+
+    $scope.volver = function () {
+        $location.path('/testMain.html');
+        $route.reload();
+    }
+});
+
+app.controller('controllerModulo', function($scope, $http,$location, $route){
+    $scope.crearModulo = function(){
+        //TODO WEB SERVICE
+        $location.path('testMain.html');
+        $route.reload();
+    }
+    $scope.editarModulo = function(){
+        //TODO WEB SERVICE
+        $location.path('/testMain.html');
+        $route.reload();
+    }
+    $scope.volver = function () {
+        $location.path('/testMain.html');
+        $route.reload();
+    }
+});
+
