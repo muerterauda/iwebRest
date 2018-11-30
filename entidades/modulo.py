@@ -10,7 +10,7 @@ _db = Database(app)
 
 
 @app.route("/modulos", methods=['GET'])
-def get_all():
+def get_all(): # Obtener todos los modulos almacenados en el sistema
     _db.cursor.execute("SELECT * FROM MODULO")
     headers = [x[0] for x in _db.cursor.description]
     datos = _db.cursor.fetchall()
@@ -19,7 +19,7 @@ def get_all():
 
 
 @app.route("/modulos", methods=['POST'])
-def create():
+def create(): # Crear un modulo con sus parametros (opcionales todos menos nombre)
     res = True
     nombre = request.values.get("nombre")
     alpha = request.values.get("alpha")
@@ -29,13 +29,13 @@ def create():
     if (not nombre) and (not alpha) and (not beta) and (not gamma) and (not kappa):
         res = False
     else:
-        n = _db.cursor.execute("INSERT INTO MODULO VALUES (%s, %s, %s, %s, %s)", (nombre, alpha, beta, gamma, kappa))
+        n = _db.cursor.execute("INSERT INTO MODULO VALUES (0, %s, %s, %s, %s, %s)", (nombre, alpha, beta, gamma, kappa))
         if n == 0:
             res = False
     return jsonify(res)
 
 @app.route("/modulos", methods=['DELETE'])
-def delete():
+def delete(): # Eliminar un modulo a partir de su id
     res = True
     id = request.values.get("id")
     if not id:
@@ -47,7 +47,7 @@ def delete():
     return jsonify(res)
 
 @app.route("/modulos", methods=['PUT'])
-def update():
+def update(): # Actualizar un modulo a partir de su id
     res = True
     id = request.values.get("id")
     nombre = request.values.get("nombre")
