@@ -3,11 +3,10 @@ from flask_restful import Resource
 import json
 from entidades.database import Database
 
-db = Database()
+db = Database();
 
 
 class Modulo(Resource):
-
     _db = Database()
 
     @_db.api.route("/modulos", methods=['GET'])
@@ -25,7 +24,7 @@ class Modulo(Resource):
 
     @_db.api.route("/modulos/<int:id>", method=['DELETE'])
     def delete(self, id):
-        self._db.cursor.execute("DELETE FROM MODULO WHERE id = %s", (id, ))
+        self._db.cursor.execute("DELETE FROM MODULO WHERE id = %s", (id,))
 
     @_db.api.route("/modulos/<int:id>", method=['PUT'])
     def update(self, id, nombre, alpha, beta, gamma, kappa):
@@ -33,4 +32,4 @@ class Modulo(Resource):
                                 'WHERE id = %s', (nombre, alpha, beta, gamma, kappa, id))
 
 
-
+db.app.run()
