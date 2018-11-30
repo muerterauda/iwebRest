@@ -19,6 +19,3 @@ CORS(app)
 def get_database_cursor():
     return mysql.get_db().cursor()
 
-
-def get_api():
-    return api
