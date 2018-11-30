@@ -27,9 +27,13 @@ def parseJSON(headers, datasource):
     return final
 
 
-def myconverter(o):
-    if isinstance(o, datetime.datetime):
-        return o.__str__()
+def parseListDateTime(datos):
+    datos = list(datos)
+    datos = [list(x) for x in datos]
+    for x in datos:
+        x[3] = x[3].strftime("%Y-%m-%d");
+        x[4] = x[4].strftime("%Y-%m-%d");
+    return datos
 
 
 class CampanaId(Resource):  # id Modulo
@@ -37,29 +41,17 @@ class CampanaId(Resource):  # id Modulo
         cur = mysql.get_db().cursor();
         cur.execute("select * from campaña where modulo = %s", (id,));
         row_headers = [x[0] for x in cur.description]
-        print(type(row_headers))
-        datos = list(cur.fetchall())
-        print(type(datos))
-        datos = [list(x) for x in datos]
-        print(type(datos[0]))
-        for x in datos:
-            print(x[3]);
-            x[3] = x[3].strftime("%Y-%m-%d");
-            x[4] = x[4].strftime("%Y-%m-%d");
-
-        for x in datos:
-            print(x);
+        datos = parseListDateTime(cur.fetchall());
         final = parseJSON(row_headers, datos)
         return json.loads(final)
 
-
-def put(self, id, nombre, fechaIni, fechaFin):  # crear Campaña asociada a Modulo
-    cur = mysql.get_db().cursor();
-    cur.execute("INSERT INTO camapaña VALUES (%d, %s, %s, %s)", (id, nombre, fechaIni, fechaFin));
-    row_headers = [x[0] for x in cur.description]
-    datos = cur.fetchall()
-    final = parseJSON(row_headers, datos)
-    return json.loads(final)
+    def put(self, id, nombre, fechaIni, fechaFin):  # crear Campaña asociada a Modulo
+        cur = mysql.get_db().cursor();
+        cur.execute("INSERT INTO campaña VALUES (%d, %s, %s, %s)", (id, nombre, fechaIni, fechaFin));
+        row_headers = [x[0] for x in cur.description]
+        datos = cur.fetchall()
+        final = parseJSON(row_headers, datos)
+        return json.loads(final)
 
 
 api.add_resource(CampanaId, '/campana/<int:id>')
