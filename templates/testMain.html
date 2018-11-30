@@ -1,6 +1,6 @@
 <div class="container">
             <button ng-click="addModulo()">Crear Modulo</button>
-            <button>Find all</button>
+            <button ng-click="findAll()">Find all</button>
              <table class="table table-striped">
                  <tr>
                     <th scope="col">
@@ -36,13 +36,14 @@
             </tr>
                 <tbody>
                 <tr ng-repeat="modulo in lista|orderBy:sortType:sortReverse track by modulo.id">
+                    <input type="checkbox" ng-click="mostrarCampanas(modulo.id)"/>
                     <th scope="row">{{modulo.nombre}}</th>
                     <th scope="row">{{modulo.alfa}}</th>
                     <th scope="row">{{modulo.beta}}</th>
                     <th scope="row">{{modulo.gamma}}</th>
                     <th scope="row">{{modulo.kappa}}</th>
-                    <th scope="row"><a ng-click="editar(id)" class="btn btn-primary" style="color: white">Editar</a></th>
-                    <th scope="row"><a ng-click="borrar(id)" class="btn btn-danger" style="color: white">Borrar</a></th>
+                    <th scope="row"><a ng-click="editarModulo(modulo.id)" class="btn btn-primary" style="color: white">Editar</a></th>
+                    <th scope="row"><a ng-click="borrarModulo(modulo.id)" class="btn btn-danger" style="color: white">Borrar</a></th>
                 </tr>
             </tbody>
              </table>
