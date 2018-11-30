@@ -1,30 +1,10 @@
-from flask import Flask
-from flaskext.mysql import MySQL
-from flask_restful import Resource, Api
-from flask import render_template
 import json
-import datetime
-from flask_cors import CORS
 
-app = Flask(__name__)
+from flask_restful import Resource
 
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-app.config['MYSQL_DATABASE_USER'] = 'iweb'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'iweb'
-app.config['MYSQL_DATABASE_DB'] = 'iweb'
+import entidades.database
 
-mysql = MySQL()
-mysql.init_app(app)
-api = Api(app)
-CORS(app)
-
-
-def parseJSON(headers, datasource):
-    json_data = []
-    for result in datasource:
-        json_data.append(dict(zip(headers, result)))
-    final = json.dumps(json_data)
-    return final
+cur = entidades.database.Database().get_cursor()
 
 
 def parseListDateTime(datos):
@@ -38,23 +18,22 @@ def parseListDateTime(datos):
 
 class CampanaId(Resource):  # id Modulo
     def get(self, id):  # obtener Campañas de Modulo
-        cur = mysql.get_db().cursor();
         cur.execute("select * from campaña where modulo = %s", (id,));
         row_headers = [x[0] for x in cur.description]
-        datos = parseListDateTime(cur.fetchall());
-        final = parseJSON(row_headers, datos)
+        datos = entidades.util.parseListDateTime(cur.fetchall());
+        final = entidades.util.parseJSON(row_headers, datos)
         return json.loads(final)
 
     def put(self, id, nombre, fechaIni, fechaFin):  # crear Campaña asociada a Modulo
-        cur = mysql.get_db().cursor();
         cur.execute("INSERT INTO campaña VALUES (%d, %s, %s, %s)", (id, nombre, fechaIni, fechaFin));
         row_headers = [x[0] for x in cur.description]
         datos = cur.fetchall()
-        final = parseJSON(row_headers, datos)
+        final = entidades.util.parseJSON(row_headers, datos)
         return json.loads(final)
 
 
-api.add_resource(CampanaId, '/campana/<int:id>')
+entidades.database.api.add_resource(CampanaId, '/campana/<int:id>')
 
 if __name__ == '__main__':
-    app.run()
+    entidades.database.run()
+    entidades.database.app.run()
