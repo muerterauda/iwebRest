@@ -1,0 +1,18 @@
+<div class="container-fluid index">
+    <h1><b>PVSHOWER</b></h1>
+        <div>
+            <form>
+                <button class="btn btn-secondary row" type="button" ng-click="verModulos()">Ver M&oacute;dulos</button>
+            </form>
+            <form>
+                <input type="file" class="row" value="archivo">
+                <button class="btn btn-secondary row" type="button" ng-click="importar()">Importar Archivo Seleccionado</button>
+            </form>
+        </div>
+        <div class="text-success">
+            {{ mensaje }}
+        </div>
+        <div class="text-danger">
+            {{ error }}
+        </div>
+    </div>
