@@ -15,7 +15,5 @@ mysql.init_app(app)
 api = Api(app)
 CORS(app)
 
-
-def get_database_cursor():
-    return mysql.get_db().cursor()
+cursor = mysql.get_db().cursor()
 
