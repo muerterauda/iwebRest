@@ -28,5 +28,5 @@ class Modulo(Resource):
 
     @entidades.database.Database.api.route("/modulos/<int:id>", method=['PUT'])
     def update(self, id, nombre, alpha, beta, gamma, kappa):
-        self.cur.execute("UPDATE MODULO SET nombre = %s, alpha = %s, beta = %s, gamma = %s, kappa = %s WHERE id = %s", (nombre, alpha, beta, gamma, kappa, id))
+        self.cur.execute("UPDATE MODULO SET nombre = %s, alfa = %s, beta = %s, gamma = %s, kappa = %s WHERE id = %s", (nombre, alpha, beta, gamma, kappa, id))
 
