@@ -20,7 +20,7 @@ app.controller('controllerTest', function ($scope, $http,$location) {
             $scope.sortType =  valor;
             $scope.sortReverse  = false;
         }
-    };
+    }; 
 
     $scope.editar = function(id) {
 
