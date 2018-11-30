@@ -1,6 +1,5 @@
 import json
 from flask import Flask, jsonify, request
-from flask_restful import Resource
 from entidades.database import Database
 import entidades.util
 

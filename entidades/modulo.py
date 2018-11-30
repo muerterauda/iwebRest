@@ -10,7 +10,7 @@ _db = Database(app)
 
 
 @app.route("/modulos", methods=['GET'])
-def get_all(): #Obtener todos los modulos almacenados en el sistema
+def get_all(): # Obtener todos los modulos almacenados en el sistema
     _db.cursor.execute("SELECT * FROM MODULO")
     headers = [x[0] for x in _db.cursor.description]
     datos = _db.cursor.fetchall()
@@ -19,7 +19,7 @@ def get_all(): #Obtener todos los modulos almacenados en el sistema
 
 
 @app.route("/modulos", methods=['POST'])
-def create(): #Crear un modulo con sus parametros (opcionales todos menos nombre)
+def create(): # Crear un modulo con sus parametros (opcionales todos menos nombre)
     res = True
     nombre = request.values.get("nombre")
     alpha = request.values.get("alpha")
