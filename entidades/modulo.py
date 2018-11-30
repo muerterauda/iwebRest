@@ -9,7 +9,7 @@ class Modulo(Resource):
     cur = entidades.database.Database().get_cursor()
     headers = None
 
-    @entidades.database.api.route("/modulos", methods=['GET'])
+    @entidades.database.Database.api.route("/modulos", methods=['GET'])
     def get_all(self):
         self.cur.execute("SELECT * FROM MODULO")
         if self.headers is None:
@@ -18,15 +18,15 @@ class Modulo(Resource):
         datos = self.cur.fetchall()
         return json.loads(entidades.util.parseJSON(self.headers, datos))
 
-    @entidades.database.api.route("/modulos", method=['POST'])
+    @entidades.database.Database.api.route("/modulos", method=['POST'])
     def create(self, nombre, alpha=0, beta=0, gamma=0, kappa=0):
         self.cur.execute("INSERT INTO MODULO VALUES (%s, %s, %s, %s, %s)", (nombre, alpha, beta, gamma, kappa))
 
-    @entidades.database.api.route("/modulos/<int:id>", method=['DELETE'])
+    @entidades.database.Database.api.route("/modulos/<int:id>", method=['DELETE'])
     def delete(self, id):
         self.cur.execute("DELETE FROM MODULO WHERE id = %s", (id, ))
 
-    @entidades.database.api.route("/modulos/<int:id>", method=['PUT'])
+    @entidades.database.Database.api.route("/modulos/<int:id>", method=['PUT'])
     def update(self, id, nombre, alpha, beta, gamma, kappa):
         self.cur.execute("UPDATE MODULO SET nombre = %s, alpha = %s, beta = %s, gamma = %s, kappa = %s WHERE id = %s", (nombre, alpha, beta, gamma, kappa, id))
 
