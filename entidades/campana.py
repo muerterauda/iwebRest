@@ -30,7 +30,7 @@ def create():  # crear Campaña asociada a Modulo con ID
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
     valor = True
-    numero = _db.cursor.execute("INSERT INTO campaña VALUES (%s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
+    numero = _db.cursor.execute("INSERT INTO campaña VALUES (0, %s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
     if (numero == 0):
         valor = False
     return jsonify(valor)

@@ -47,7 +47,7 @@ def delete():
     return jsonify(res)
 
 @app.route("/modulos", methods=['PUT'])
-def update(id, nombre, alpha, beta, gamma, kappa):
+def update():
     res = True
     id = request.values.get("id")
     nombre = request.values.get("nombre")
