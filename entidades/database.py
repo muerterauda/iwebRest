@@ -6,8 +6,8 @@ from flask_cors import CORS
 
 class Database:
 
-    def __init__(self):
-        app = Flask(__name__)
+    def __init__(self, name):
+        app = Flask(name)
         app.config['MYSQL_DATABASE_HOST'] = 'localhost'
         app.config['MYSQL_DATABASE_USER'] = 'iweb'
         app.config['MYSQL_DATABASE_PASSWORD'] = 'iweb'
