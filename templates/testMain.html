@@ -36,7 +36,7 @@
             </tr>
                 <tbody>
                 <tr ng-repeat="modulo in lista|orderBy:sortType:sortReverse track by modulo.id">
-                    <input type="checkbox" ng-click="mostrarCampanas(modulo.id)"/>
+                    <th><input type="checkbox" ng-click="mostrarCampanas(modulo.id)"/></th>
                     <th scope="row">{{modulo.nombre}}</th>
                     <th scope="row">{{modulo.alfa}}</th>
                     <th scope="row">{{modulo.beta}}</th>
@@ -45,8 +45,7 @@
                     <th scope="row"><a ng-click="editarModulo(modulo.id)" class="btn btn-primary" style="color: white">Editar</a></th>
                     <th scope="row"><a ng-click="borrarModulo(modulo.id)" class="btn btn-danger" style="color: white">Borrar</a></th>
                 </tr>
-            </tbody>
-
+                </tbody>
              </table>
 
             <button ng-click="addCampana()">Crear Campaña</button>
@@ -85,7 +84,7 @@
                 </th>
             </tr>
                 <tbody>
-            <tr ng-repeat="campana in listacampana|track by campana.id">
+            <tr ng-repeat="campana in listacampana track by campana.id">
                 <th scope="row">{{ campana.id }}</th>
                 <th scope="row">{{ campana.nombre }}</th>
                 <th scope="row">{{ campana.modulo }}</th>
