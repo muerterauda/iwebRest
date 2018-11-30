@@ -6,7 +6,7 @@ import entidades.util
 
 class Modulo(Resource):
 
-    cur = entidades.database.Database().get_cursor()
+    cur = entidades.database.Database().get_cursor
     headers = None
 
     @entidades.database.Database.api.route("/modulos", methods=['GET'])

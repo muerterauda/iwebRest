@@ -4,7 +4,7 @@ from flask_restful import Api
 from flask_cors import CORS
 
 
-class Database():
+class Database:
 
     cursor = None
     api = None
@@ -24,3 +24,5 @@ class Database():
     def get_cursor(self):
         return self.cursor
 
+    def get_api(self):
+        return self.api
