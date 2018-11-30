@@ -3,6 +3,7 @@ from flaskext.mysql import MySQL
 from flask_restful import Api
 from flask_cors import CORS
 
+
 class Database():
 
     cursor = None

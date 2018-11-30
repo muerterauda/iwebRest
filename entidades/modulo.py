@@ -3,9 +3,10 @@ from flask_restful import Resource
 import json
 import entidades.util
 
+
 class Modulo(Resource):
 
-    cur = entidades.database.cursor
+    cur = entidades.database.Database().get_cursor()
     headers = None
 
     @entidades.database.api.route("/modulos", methods=['GET'])
