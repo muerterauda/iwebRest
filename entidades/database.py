@@ -7,6 +7,7 @@ from flask_cors import CORS
 class Database():
 
     cursor = None
+    api = None
 
     def __init__(self):
         app = Flask(__name__)
