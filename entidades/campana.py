@@ -3,9 +3,8 @@ from flask import Flask, jsonify, request
 from entidades.database import Database
 import entidades.util
 
-app = Flask(__name__)
-
-_db = Database(app)
+_db = Database(Flask(__name__))
+app = _db.app
 
 
 @app.route("/campana", methods=['GET'])
@@ -48,11 +47,13 @@ def update():  # editar Campaña asociada a Modulo con ID
 
 
 @app.route("/campana", methods=['DELETE'])
-def delete(): #
+def delete():  #
     id = request.values.get('id')
     valor = True
     numero = _db.cursor.execute("DELETE FROM campaña WHERE id = %s", (id,))
-    if(numero==0):
+    if (numero == 0):
         valor = False
     return jsonify(valor)
 
+
+app.run(port=5001, debug=False)

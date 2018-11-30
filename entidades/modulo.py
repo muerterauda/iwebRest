@@ -4,13 +4,12 @@ import entidades.util
 from flask import jsonify
 from entidades.database import Database
 
-app = Flask(__name__)
-
-_db = Database(app)
+_db = Database(Flask(__name__))
+app = _db.app
 
 
 @app.route("/modulos", methods=['GET'])
-def get_all(): # Obtener todos los modulos almacenados en el sistema
+def get_all():  # Obtener todos los modulos almacenados en el sistema
     _db.cursor.execute("SELECT * FROM MODULO")
     headers = [x[0] for x in _db.cursor.description]
     datos = _db.cursor.fetchall()
@@ -19,7 +18,7 @@ def get_all(): # Obtener todos los modulos almacenados en el sistema
 
 
 @app.route("/modulos", methods=['POST'])
-def create(): # Crear un modulo con sus parametros (opcionales todos menos nombre)
+def create_modulo():  # Crear un modulo con sus parametros (opcionales todos menos nombre)
     res = True
     nombre = request.values.get("nombre")
     alpha = request.values.get("alpha")
@@ -34,20 +33,22 @@ def create(): # Crear un modulo con sus parametros (opcionales todos menos nombr
             res = False
     return jsonify(res)
 
+
 @app.route("/modulos", methods=['DELETE'])
-def delete(): # Eliminar un modulo a partir de su id
+def create_delete():  # Eliminar un modulo a partir de su id
     res = True
     id = request.values.get("id")
     if not id:
         res = False
     else:
-        n = _db.cursor.execute("DELETE FROM MODULO WHERE id = %s", (id, ))
+        n = _db.cursor.execute("DELETE FROM MODULO WHERE id = %s", (id,))
         if n == 0:
             res = False
     return jsonify(res)
 
+
 @app.route("/modulos", methods=['PUT'])
-def update(): # Actualizar un modulo a partir de su id
+def create_update():  # Actualizar un modulo a partir de su id
     res = True
     id = request.values.get("id")
     nombre = request.values.get("nombre")
@@ -59,9 +60,10 @@ def update(): # Actualizar un modulo a partir de su id
         res = False
     else:
         n = _db.cursor.execute('UPDATE MODULO SET nombre = %s, alfa = %s, beta = %s, gamma = %s, kappa = %s '
-                            'WHERE id = %s', (nombre, alpha, beta, gamma, kappa, id))
+                               'WHERE id = %s', (nombre, alpha, beta, gamma, kappa, id))
         if n == 0:
             res = False
     return jsonify(res)
 
-app.run()
+
+app.run(port=5000, debug=False)
