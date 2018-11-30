@@ -14,7 +14,7 @@ app.config(function($routeProvider) {
                 templateUrl: 'testCrearCampana.html',
                 controller: 'controllerCampana'
         }).when('/editCampana', {
-            templateUrl: 'testEditarCampana',
+            templateUrl: 'testEditarCampana.html',
             controller: 'controllerCampana'
     })
         .otherwise({
