@@ -2,9 +2,10 @@ import json
 
 from flask_restful import Resource
 
-import entidades.database
+from entidades.database import Database
+import entidades.util
 
-cur = entidades.database.Database().get_cursor()
+cur = Database.get_cursor
 
 
 def parseListDateTime(datos):
@@ -32,8 +33,6 @@ class CampanaId(Resource):  # id Modulo
         return json.loads(final)
 
 
-entidades.database.api.add_resource(CampanaId, '/campana/<int:id>')
+Database.api.add_resource(CampanaId, '/campana/<int:id>')
 
-if __name__ == '__main__':
-    entidades.database.run()
-    entidades.database.app.run()
+
