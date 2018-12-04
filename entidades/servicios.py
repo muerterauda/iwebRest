@@ -1,5 +1,5 @@
 import json
-from flask import Flask, jsonify, request, Blueprint
+from flask import Flask, jsonify, request, Blueprint, render_template
 import entidades.util
 from flask_cors import CORS
 from flask_restful import Api
@@ -21,7 +21,7 @@ cursor = mysql.connect().cursor()
 
 
 @bp.route("/campanas", methods=['GET'])
-def get():  # obtener Campañas de Modulo
+def getCampana():  # obtener Campañas de Modulo
     id = request.values.get('id');
     fechaIni = request.values.get('fechaIni');
     if (not fechaIni):
@@ -36,7 +36,7 @@ def get():  # obtener Campañas de Modulo
 
 
 @bp.route("/campanas", methods=['POST'])
-def create():  # crear Campaña asociada a Modulo con ID
+def createCampana():  # crear Campaña asociada a Modulo con ID
     id = request.values.get('id');
     nombre = request.values.get('nombre')
     fechaIni = request.values.get('fechaIni')
@@ -49,7 +49,7 @@ def create():  # crear Campaña asociada a Modulo con ID
 
 
 @bp.route("/campanas", methods=['PUT'])
-def update():  # editar Campaña asociada a Modulo con ID
+def updateCampana():  # editar Campaña asociada a Modulo con ID
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
     valor = True
@@ -61,7 +61,7 @@ def update():  # editar Campaña asociada a Modulo con ID
 
 
 @bp.route("/campanas", methods=['DELETE'])
-def delete():  #
+def deleteCamapana():  #
     id = request.values.get('id')
     valor = True
     numero = cursor.execute("DELETE FROM campaña WHERE id = %s", (id,))
@@ -71,7 +71,7 @@ def delete():  #
 
 
 @bp.route("/modulos", methods=['GET'])
-def get():  # Obtener todos los modulos almacenados en el sistema
+def getModulo():  # Obtener todos los modulos almacenados en el sistema
     id = request.values.get("id")
     nombre = request.values.get("nombre")
     if not id and not nombre:
@@ -87,7 +87,7 @@ def get():  # Obtener todos los modulos almacenados en el sistema
 
 
 @bp.route("/modulos", methods=['POST'])
-def create_modulo():  # Crear un modulo con sus parametros (opcionales todos menos nombre)
+def createModulo():  # Crear un modulo con sus parametros (opcionales todos menos nombre)
     res = True
     nombre = request.values.get("nombre")
     alpha = request.values.get("alpha")
@@ -104,7 +104,7 @@ def create_modulo():  # Crear un modulo con sus parametros (opcionales todos men
 
 
 @bp.route("/modulos", methods=['DELETE'])
-def create_delete():  # Eliminar un modulo a partir de su id
+def deleteModulo():  # Eliminar un modulo a partir de su id
     res = True
     id = request.values.get("id")
     if not id:
@@ -117,7 +117,7 @@ def create_delete():  # Eliminar un modulo a partir de su id
 
 
 @bp.route("/modulos", methods=['PUT'])
-def create_update():  # Actualizar un modulo a partir de su id
+def updateModulo():  # Actualizar un modulo a partir de su id
     res = True
     id = request.values.get("id")
     nombre = request.values.get("nombre")
