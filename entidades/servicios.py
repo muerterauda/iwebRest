@@ -4,6 +4,7 @@ import entidades.util
 from flask_cors import CORS
 from flask_restful import Api
 from flaskext.mysql import MySQL
+from jinja2 import Environment, PackageLoader, select_autoescape
 
 bp = Blueprint('iweb', __name__, template_folder='templates');
 
@@ -18,6 +19,20 @@ mysql.init_app(app)
 api = Api(app=app)
 CORS(app)
 cursor = mysql.connect().cursor()
+env = Environment(
+    loader=PackageLoader('pvshower', 'templates'),
+    autoescape=select_autoescape(['html', 'xml'])
+)
+
+@app.route("/")
+def getIndex():
+    template = env.get_template('index.html')
+    return template
+
+@app.route("/principal")
+def getPrincipal():
+    template = env.get_template('principal.html')
+    return template
 
 
 @bp.route("/campanas", methods=['GET'])

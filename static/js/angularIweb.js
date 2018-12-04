@@ -11,7 +11,7 @@ app.config(function ($routeProvider) {
             controller: 'editarController'
         })
         .otherwise({
-            templateUrl : 'principal.html',
+            templateUrl : 'principal',
             controller: 'principalController'
         });
 });
