@@ -1,28 +1,20 @@
-var app=angular.module('pvshowerTest', ['ngRoute']);
+var app = angular.module('appIweb', ['ngRoute']);
 
-app.config(function($routeProvider) {
+app.config(function ($routeProvider) {
     $routeProvider
-        .when('/addModulo',{
-            templateUrl: 'testCrearModulo.html',
-            controller: 'controllerModulo'
+        .when('/modulos', {
+            templateUrl : 'modulos.html',
+            controller: 'modulosController'
         })
-        .when('/editModulo',{
-            templateUrl: 'testEditarModulo.html',
-            controller: 'controllerModulo'
-
-        }).when('/addCampana',{
-                templateUrl: 'testCrearCampana.html',
-                controller: 'controllerCampana'
-        }).when('/editCampana', {
-            templateUrl: 'testEditarCampana.html',
-            controller: 'controllerCampana'
-    })
+        .when('/editarModulo', {
+            templateUrl : 'editarModulo.html',
+            controller: 'editarController'
+        })
         .otherwise({
-            templateUrl: 'testMain.html',
-            controller: 'controllerTest'
+            templateUrl : 'principal.html',
+            controller: 'principalController'
         });
 });
-
 app.factory('mostrarCampanasModulo', function ($http) {
     var listaModulosMostrar={
         listaModulos: []
@@ -69,15 +61,29 @@ app.factory('mostrarCampanasModulo', function ($http) {
        return listaModulosMostrar.listaModulos.indexOf(id);
     }
       return {
-        findModulo: findModulo,
-        anadirModulo: anadir,
-        borrarModulo: borrar,
+          findModulo: findModulo,
+          anadirModulo: anadir,
+          borrarModulo: borrar,
           anadirCampanas: resetAnadir,
           restablecerCheckbox:restablecerCheckbox
     };
 })
+app.controller('principalController', function ($scope, $http, $location, $route) {
 
-app.controller('controllerTest', function ($scope, $http,$location, $route, mostrarCampanasModulo) {
+    $scope.mensaje = "";
+    $scope.error = "";
+
+    $scope.verModulos = function () {
+        $location.path('/modulos');
+        $route.reload();
+    };
+
+    $scope.importar = function () {
+        //opción de importar Objeto: $scope.archivo
+    }
+});
+
+app.controller('modulosController', function ($scope, $http,$location, $route, mostrarCampanasModulo){
     mostrarCampanasModulo.restablecerCheckbox();
     var url = "http://localhost:5000/modulos";
     var config={
@@ -130,7 +136,7 @@ app.controller('controllerTest', function ($scope, $http,$location, $route, most
         $route.reload();
     };
     $scope.editarModulo = function(id) {
-        $location.path('/editModulo');
+        $location.path('/editarModulo');
         $route.reload();
     };
     $scope.borrarModulo = function(id) {
@@ -147,25 +153,7 @@ app.controller('controllerTest', function ($scope, $http,$location, $route, most
     }
 });
 
-app.controller('controllerCampana',  function ($scope, $http,$location, $route) {
-    $scope.crearCampana = function(){
-        //TODO WEB SERVICE
-        $location.path('/testMain.html');
-        $route.reload();
-    }
-    $scope.editarCampana = function(){
-        //TODO WEB SERVICE
-        $location.path('/testMain.html');
-        $route.reload();
-    }
-
-    $scope.volver = function () {
-        $location.path('/testMain.html');
-        $route.reload();
-    }
-});
-
-app.controller('controllerModulo', function($scope, $http,$location, $route){
+app.controller('editarModuloController', function($scope, $http,$location, $route){
     $scope.crearModulo = function(){
         //TODO WEB SERVICE
         $location.path('testMain.html');
