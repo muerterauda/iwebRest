@@ -1,13 +1,15 @@
-var app = angular.module('appIweb', ['ngRoute']);
+var app = angular.module('appIweb', ['ngRoute']).config(function($interpolateProvider){
+    $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+});;
 
 app.config(function ($routeProvider) {
     $routeProvider
         .when('/modulos', {
-            templateUrl : 'modulos.html',
+            templateUrl : 'vistaModulos',
             controller: 'modulosController'
         })
         .when('/editarModulo', {
-            templateUrl : 'editarModulo.html',
+            templateUrl : 'editarModulo',
             controller: 'editarController'
         })
         .otherwise({
@@ -20,13 +22,13 @@ app.factory('mostrarCampanasModulo', function ($http) {
         listaModulos: []
     };
     function resetAnadir(id){
-        var url = "http://localhost:5000/campanas/"+id;
+        var url = "http://localhost:5000/iweb/v1/campanas?id="+id;
         var config={
             headers:{
                 'Content-Type': 'application/json;charset=utf-8;'
             }
         };
-        var promise=$http.get(url, config).then(function (response) {
+        var promise=$http.get(url,config).then(function (response) {
             return response.data;
         }, function (response) {
         });
@@ -85,7 +87,7 @@ app.controller('principalController', function ($scope, $http, $location, $route
 
 app.controller('modulosController', function ($scope, $http,$location, $route, mostrarCampanasModulo){
     mostrarCampanasModulo.restablecerCheckbox();
-    var url = "http://localhost:5000/modulos";
+    var url = "http://localhost:5000/iweb/v1/modulos";
     var config={
         headers:{
             'Content-Type': 'application/json;charset=utf-8;'

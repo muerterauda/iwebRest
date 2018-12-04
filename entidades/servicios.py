@@ -4,7 +4,6 @@ import entidades.util
 from flask_cors import CORS
 from flask_restful import Api
 from flaskext.mysql import MySQL
-from jinja2 import Environment, PackageLoader, select_autoescape
 
 bp = Blueprint('iweb', __name__, template_folder='templates');
 
@@ -16,33 +15,36 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'iweb'
 app.config['MYSQL_DATABASE_DB'] = 'iweb'
 mysql = MySQL()
 mysql.init_app(app)
-api = Api(app=app)
+api = Api(app)
 CORS(app)
 cursor = mysql.connect().cursor()
-env = Environment(
-    loader=PackageLoader('pvshower', 'templates'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
+
 
 @app.route("/")
 def getIndex():
-    template = env.get_template('index.html')
-    return template
+    return render_template("index.html")
+
 
 @app.route("/principal")
 def getPrincipal():
-    template = env.get_template('principal.html')
-    return template
+    return render_template("principal.html")
 
+@app.route("/vistaModulos")
+def getModulosVista():
+    return render_template("modulos.html")
+
+@app.route("/editarModulo")
+def getEditarModuloVista():
+    return render_template("editarModulo.html")
 
 @bp.route("/campanas", methods=['GET'])
 def getCampana():  # obtener Campañas de Modulo
     id = request.values.get('id');
     fechaIni = request.values.get('fechaIni');
     if (not fechaIni):
-        cursor.execute("select * from campaña where modulo = %s", (id,))
+        cursor.execute("select * from campana where modulo = %s", (id,))
     else:
-        cursor.execute("select * from campaña where modulo = %s and fechaInicio = %s", (id, fechaIni,))
+        cursor.execute("select * from campana where modulo = %s and fechaInicio = %s", (id, fechaIni,))
     row_headers = [x[0] for x in cursor.description]
     datos = entidades.util.parseListDateTime(cursor.fetchall())
     final = entidades.util.parseJSON(row_headers, datos)
@@ -57,7 +59,7 @@ def createCampana():  # crear Campaña asociada a Modulo con ID
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
     valor = True
-    numero = cursor.execute("INSERT INTO campaña VALUES (0, %s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
+    numero = cursor.execute("INSERT INTO campana VALUES (0, %s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
     if (numero == 0):
         valor = False
     return jsonify(valor)
@@ -68,7 +70,7 @@ def updateCampana():  # editar Campaña asociada a Modulo con ID
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
     valor = True
-    numero = cursor.execute("UPDATE campaña SET fechaInicio = %s, fechaFin = %s WHERE id = %s",
+    numero = cursor.execute("UPDATE campana SET fechaInicio = %s, fechaFin = %s WHERE id = %s",
                             (fechaIni, fechaFin,))
     if (numero == 0):
         valor = False
@@ -79,7 +81,7 @@ def updateCampana():  # editar Campaña asociada a Modulo con ID
 def deleteCamapana():  #
     id = request.values.get('id')
     valor = True
-    numero = cursor.execute("DELETE FROM campaña WHERE id = %s", (id,))
+    numero = cursor.execute("DELETE FROM campana WHERE id = %s", (id,))
     if (numero == 0):
         valor = False
     return jsonify(valor)

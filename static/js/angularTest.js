@@ -79,7 +79,7 @@ app.factory('mostrarCampanasModulo', function ($http) {
 
 app.controller('controllerTest', function ($scope, $http,$location, $route, mostrarCampanasModulo) {
     mostrarCampanasModulo.restablecerCheckbox();
-    var url = "http://localhost:5000/iweb/v1/modulos";
+    var url = "http://localhost:5000modulos";
     var config={
         headers:{
             'Content-Type': 'application/json;charset=utf-8;'
