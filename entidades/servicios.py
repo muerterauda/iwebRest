@@ -5,9 +5,9 @@ from flask_cors import CORS
 from flask_restful import Api
 from flaskext.mysql import MySQL
 
-bp = Blueprint('iweb', __name__, template_folder='templates');
-
 app = (Flask(__name__))
+
+print(__name__)
 
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_USER'] = 'iweb'
@@ -15,19 +15,21 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'iweb'
 app.config['MYSQL_DATABASE_DB'] = 'iweb'
 mysql = MySQL()
 mysql.init_app(app)
-api = Api(app=app)
+api = Api(app)
 CORS(app)
 cursor = mysql.connect().cursor()
 
+bp = Blueprint('iweb', __name__, template_folder='templates');
+
 
 @bp.route("/campanas", methods=['GET'])
-def getCampana():  # obtener Campañas de Modulo
+def getCampana():  # obtener CAMPANAs de Modulo
     id = request.values.get('id');
     fechaIni = request.values.get('fechaIni');
     if (not fechaIni):
-        cursor.execute("select * from campaña where modulo = %s", (id,))
+        cursor.execute("select * from CAMPANA where modulo = %s", (id,))
     else:
-        cursor.execute("select * from campaña where modulo = %s and fechaInicio = %s", (id, fechaIni,))
+        cursor.execute("select * from CAMPANA where modulo = %s and fechaInicio = %s", (id, fechaIni,))
     row_headers = [x[0] for x in cursor.description]
     datos = entidades.util.parseListDateTime(cursor.fetchall())
     final = entidades.util.parseJSON(row_headers, datos)
@@ -36,24 +38,24 @@ def getCampana():  # obtener Campañas de Modulo
 
 
 @bp.route("/campanas", methods=['POST'])
-def createCampana():  # crear Campaña asociada a Modulo con ID
+def createCampana():  # crear CAMPANA asociada a Modulo con ID
     id = request.values.get('id');
     nombre = request.values.get('nombre')
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
     valor = True
-    numero = cursor.execute("INSERT INTO campaña VALUES (0, %s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
+    numero = cursor.execute("INSERT INTO CAMPANA VALUES (0, %s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
     if (numero == 0):
         valor = False
     return jsonify(valor)
 
 
 @bp.route("/campanas", methods=['PUT'])
-def updateCampana():  # editar Campaña asociada a Modulo con ID
+def updateCampana():  # editar CAMPANA asociada a Modulo con ID
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
     valor = True
-    numero = cursor.execute("UPDATE campaña SET fechaInicio = %s, fechaFin = %s WHERE id = %s",
+    numero = cursor.execute("UPDATE CAMPANA SET fechaInicio = %s, fechaFin = %s WHERE id = %s",
                             (fechaIni, fechaFin,))
     if (numero == 0):
         valor = False
@@ -64,7 +66,7 @@ def updateCampana():  # editar Campaña asociada a Modulo con ID
 def deleteCamapana():  #
     id = request.values.get('id')
     valor = True
-    numero = cursor.execute("DELETE FROM campaña WHERE id = %s", (id,))
+    numero = cursor.execute("DELETE FROM CAMPANA WHERE id = %s", (id,))
     if (numero == 0):
         valor = False
     return jsonify(valor)
