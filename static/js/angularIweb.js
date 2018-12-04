@@ -17,6 +17,46 @@ app.config(function ($routeProvider) {
             controller: 'principalController'
         });
 });
+app.factory('importarModulo', function () {
+    var modulo = {
+        nombre: null,
+        alfa: null,
+        beta: null,
+        gamma: null,
+        kappa: null
+    };
+
+    function setName(nombre) {
+        modulo.nombre=nombre;
+    }
+
+    function setAlfa(alfa) {
+        modulo.alfa=alfa;
+    }
+    function setBeta(beta) {
+        modulo.beta=beta;
+    }
+    function setGamma(gamma) {
+        modulo.gamma=gamma;
+    }
+    function setKappa(kappa) {
+        modulo.kappa=kappa;
+    }
+    function getModulo() {
+        return modulo;
+    }
+
+    return {
+        setName: setName,
+        setAlfa: setAlfa,
+        setBeta: setBeta,
+        setGamma: setGamma,
+        setKappa: setKappa,
+        getModulo: getModulo
+    };
+
+});
+
 app.factory('mostrarCampanasModulo', function ($http) {
     var listaModulosMostrar={
         listaModulos: []
@@ -70,7 +110,7 @@ app.factory('mostrarCampanasModulo', function ($http) {
           restablecerCheckbox:restablecerCheckbox
     };
 })
-app.controller('principalController', function ($scope, $http, $location, $route) {
+app.controller('principalController', function ($scope, $http, $location, $route, importarModulo) {
 
     $scope.mensaje = "";
     $scope.error = "";
@@ -82,6 +122,48 @@ app.controller('principalController', function ($scope, $http, $location, $route
 
     $scope.importar = function () {
         //opción de importar Objeto: $scope.archivo
+         var f = document.getElementById('file').files[0],
+            r = new FileReader();
+        var lines;
+        r.onload = function(e) {
+            var data = e.target.result;
+            lines=data.split("\n");
+            if(lines.length>20){
+                var nombre=lines[0].replace('/r','');
+                var alfa=lines[14].replace('/r','');
+                var beta=lines[16].replace('/r','');
+                var gamma=lines[18].replace('/r','');
+                var kappa=lines[20].replace('/r','');
+                importarModulo.setName(nombre);
+                importarModulo.setAlfa(alfa);
+                importarModulo.setBeta(beta);
+                importarModulo.setGamma(gamma);
+                importarModulo.setKappa(kappa);
+
+             var url = "http://localhost:5000/iweb/v1/modulos";
+             var config={
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+             };
+            $http.post(url, importarModulo.getModulo(), config).then(function (response) {
+               if(response.data===false){
+                    $scope.error = "Importacion fallida: fichero no valido o modulo repetido";
+                    $scope.mensaje =null;
+               }else{
+                    $scope.mensaje = "Importacion realizada correctamente: modulo"+importarModulo.getModulo().nombre+" creado en el sistema";
+                   $scope.error =null;
+               }
+
+            }, function (response) {
+            });
+            }else{
+                 $scope.error = "Fichero erroneo";
+                 $scope.mensaje =null;
+            }
+
+            };
+            r.readAsBinaryString(f);
     }
 });
 

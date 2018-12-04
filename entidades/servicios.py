@@ -106,17 +106,24 @@ def getModulo():  # Obtener todos los modulos almacenados en el sistema
 @bp.route("/modulos", methods=['POST'])
 def createModulo():  # Crear un modulo con sus parametros (opcionales todos menos nombre)
     res = True
-    nombre = request.values.get("nombre")
-    alpha = request.values.get("alpha")
-    beta = request.values.get("beta")
-    gamma = request.values.get("gamma")
-    kappa = request.values.get("kappa")
-    if (not nombre) and (not alpha) and (not beta) and (not gamma) and (not kappa):
+    json=request.json
+    nombre = json.get("nombre")
+    alfa =json.get("alfa")
+    beta = json.get("beta")
+    gamma = json.get("gamma")
+    kappa = json.get("kappa")
+    if (not nombre) or (not alfa) or (not beta) or (not gamma) or (not kappa):
         res = False
     else:
-        n = cursor.execute("INSERT INTO MODULO VALUES (0, %s, %s, %s, %s, %s)", (nombre, alpha, beta, gamma, kappa))
-        if n == 0:
-            res = False
+        nombre = nombre.replace("\r", "")
+        alfa = alfa.replace("\r", "")
+        beta = beta.replace("\r", "")
+        gamma = gamma.replace("\r", "")
+        kappa = kappa.replace("\r", "")
+        try:
+            cursor.execute("INSERT INTO MODULO VALUES (0, %s, %s, %s, %s, %s)", (nombre, alfa, beta, gamma, kappa))
+        except Exception:
+            res=False
     return jsonify(res)
 
 
