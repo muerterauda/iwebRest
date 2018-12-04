@@ -13,7 +13,6 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_USER'] = 'iweb'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'iweb'
 app.config['MYSQL_DATABASE_DB'] = 'iweb'
-# app.config["APPLICATION_ROOT"] = '/iweb/v1/'
 mysql = MySQL()
 mysql.init_app(app)
 api = Api(app=app)
@@ -21,21 +20,22 @@ CORS(app)
 cursor = mysql.connect().cursor()
 
 
-@bp.route("/campana", methods=['GET'])
+@bp.route("/campanas", methods=['GET'])
 def get():  # obtener Campañas de Modulo
     id = request.values.get('id');
-    numero = cursor.execute("select * from campaña where modulo = %s", (id,))
-    if (numero > 0):
-        row_headers = [x[0] for x in cursor.description]
-        datos = entidades.util.parseListDateTime(cursor.fetchall())
-        final = entidades.util.parseJSON(row_headers, datos)
-        retorno = json.loads(final)
+    fechaIni = request.values.get('fechaIni');
+    if (not fechaIni):
+        cursor.execute("select * from campaña where modulo = %s", (id,))
     else:
-        retorno = False
+        cursor.execute("select * from campaña where modulo = %s and fechaInicio = %s", (id, fechaIni,))
+    row_headers = [x[0] for x in cursor.description]
+    datos = entidades.util.parseListDateTime(cursor.fetchall())
+    final = entidades.util.parseJSON(row_headers, datos)
+    retorno = json.loads(final)
     return jsonify(retorno)
 
 
-@bp.route("/campana", methods=['POST'])
+@bp.route("/campanas", methods=['POST'])
 def create():  # crear Campaña asociada a Modulo con ID
     id = request.values.get('id');
     nombre = request.values.get('nombre')
@@ -48,7 +48,7 @@ def create():  # crear Campaña asociada a Modulo con ID
     return jsonify(valor)
 
 
-@bp.route("/campana", methods=['PUT'])
+@bp.route("/campanas", methods=['PUT'])
 def update():  # editar Campaña asociada a Modulo con ID
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
@@ -60,7 +60,7 @@ def update():  # editar Campaña asociada a Modulo con ID
     return jsonify(valor)
 
 
-@bp.route("/campana", methods=['DELETE'])
+@bp.route("/campanas", methods=['DELETE'])
 def delete():  #
     id = request.values.get('id')
     valor = True
@@ -71,8 +71,15 @@ def delete():  #
 
 
 @bp.route("/modulos", methods=['GET'])
-def get_all():  # Obtener todos los modulos almacenados en el sistema
-    cursor.execute("SELECT * FROM MODULO")
+def get():  # Obtener todos los modulos almacenados en el sistema
+    id = request.values.get("id")
+    nombre = request.values.get("nombre")
+    if not id and not nombre:
+        cursor.execute("SELECT * FROM MODULO")
+    elif not nombre:
+        cursor.execute("SELECT * FROM MODULO WHERE id= %s", (id,))
+    elif not id:
+        cursor.execute("SELECT * FROM MODULO WHERE nombre= %s", (nombre,))
     headers = [x[0] for x in cursor.description]
     datos = cursor.fetchall()
     final = entidades.util.parseJSON(headers, datos)
