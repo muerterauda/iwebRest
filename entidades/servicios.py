@@ -29,22 +29,42 @@ def getIndex():
 def getPrincipal():
     return render_template("principal.html")
 
+
 @app.route("/vistaModulos")
 def getModulosVista():
     return render_template("modulos.html")
+
 
 @app.route("/editarModulo")
 def getEditarModuloVista():
     return render_template("editarModulo.html")
 
+
+@app.route("/vistaCrearModulo")
+def getCrearModulo():
+    return render_template("crearModulo.html")
+
+
+@app.route("/vistaCrearCampana")
+def getCrearCampana():
+    return render_template("crearCampana.html")
+
+
+@app.route("/busquedasServer")
+def getBusquedasVista():
+    return render_template("busquedas.html")
+
+
 @bp.route("/campanas", methods=['GET'])
 def getCampana():  # obtener Campañas de Modulo
     id = request.values.get('id');
     fechaIni = request.values.get('fechaIni');
+    if (fechaIni is not None):
+        fechaIni = fechaIni.replace('/', '-')
     if (not fechaIni):
         cursor.execute("select * from campana where modulo = %s", (id,))
     else:
-        cursor.execute("select * from campana where modulo = %s and fechaInicio = %s", (id, fechaIni,))
+        cursor.execute("select * from campana where fechaInicio = %s", (fechaIni,))
     row_headers = [x[0] for x in cursor.description]
     datos = entidades.util.parseListDateTime(cursor.fetchall())
     final = entidades.util.parseJSON(row_headers, datos)
@@ -55,9 +75,14 @@ def getCampana():  # obtener Campañas de Modulo
 @bp.route("/campanas", methods=['POST'])
 def createCampana():  # crear Campaña asociada a Modulo con ID
     id = request.values.get('id');
+    print(id)
     nombre = request.values.get('nombre')
+    print(nombre)
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
+    fechaIni = fechaIni.replace('/', '-')
+    fechaFin = fechaFin.replace('/', '-')
+    print(id+nombre+fechaFin+fechaIni)
     valor = True
     numero = cursor.execute("INSERT INTO campana VALUES (0, %s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
     if (numero == 0):
@@ -106,24 +131,25 @@ def getModulo():  # Obtener todos los modulos almacenados en el sistema
 @bp.route("/modulos", methods=['POST'])
 def createModulo():  # Crear un modulo con sus parametros (opcionales todos menos nombre)
     res = True
-    json=request.json
+    json = request.json
     nombre = json.get("nombre")
-    alfa =json.get("alfa")
+    alfa = json.get("alfa")
     beta = json.get("beta")
     gamma = json.get("gamma")
     kappa = json.get("kappa")
+
     if (not nombre) or (not alfa) or (not beta) or (not gamma) or (not kappa):
         res = False
     else:
-        nombre = nombre.replace("\r", "")
-        alfa = alfa.replace("\r", "")
-        beta = beta.replace("\r", "")
-        gamma = gamma.replace("\r", "")
-        kappa = kappa.replace("\r", "")
+        nombre = str(nombre).replace("\r", "")
+        alfa = str(alfa).replace("\r", "")
+        beta = str(beta).replace("\r", "")
+        gamma = str(gamma).replace("\r", "")
+        kappa = str(kappa).replace("\r", "")
         try:
             cursor.execute("INSERT INTO MODULO VALUES (0, %s, %s, %s, %s, %s)", (nombre, alfa, beta, gamma, kappa))
         except Exception:
-            res=False
+            res = False
     return jsonify(res)
 
 
@@ -131,6 +157,7 @@ def createModulo():  # Crear un modulo con sus parametros (opcionales todos meno
 def deleteModulo():  # Eliminar un modulo a partir de su id
     res = True
     id = request.values.get("id")
+    print(id)
     if not id:
         res = False
     else:
