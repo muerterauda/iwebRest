@@ -40,9 +40,19 @@ def getEditarModuloVista():
     return render_template("editarModulo.html")
 
 
+@app.route("/vistaCrearModulo")
+def getCrearModulo():
+    return render_template("crearModulo.html")
+
+
+@app.route("/vistaCrearCampana")
+def getCrearCampana():
+    return render_template("crearCampana.html")
+
+
 @app.route("/busquedasServer")
 def getBusquedasVista():
-    return render_template("testMain.html")
+    return render_template("busquedas.html")
 
 
 @bp.route("/campanas", methods=['GET'])
@@ -65,9 +75,14 @@ def getCampana():  # obtener Campañas de Modulo
 @bp.route("/campanas", methods=['POST'])
 def createCampana():  # crear Campaña asociada a Modulo con ID
     id = request.values.get('id');
+    print(id)
     nombre = request.values.get('nombre')
+    print(nombre)
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
+    fechaIni = fechaIni.replace('/', '-')
+    fechaFin = fechaFin.replace('/', '-')
+    print(id+nombre+fechaFin+fechaIni)
     valor = True
     numero = cursor.execute("INSERT INTO campana VALUES (0, %s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
     if (numero == 0):
@@ -122,14 +137,15 @@ def createModulo():  # Crear un modulo con sus parametros (opcionales todos meno
     beta = json.get("beta")
     gamma = json.get("gamma")
     kappa = json.get("kappa")
+
     if (not nombre) or (not alfa) or (not beta) or (not gamma) or (not kappa):
         res = False
     else:
-        nombre = nombre.replace("\r", "")
-        alfa = alfa.replace("\r", "")
-        beta = beta.replace("\r", "")
-        gamma = gamma.replace("\r", "")
-        kappa = kappa.replace("\r", "")
+        nombre = str(nombre).replace("\r", "")
+        alfa = str(alfa).replace("\r", "")
+        beta = str(beta).replace("\r", "")
+        gamma = str(gamma).replace("\r", "")
+        kappa = str(kappa).replace("\r", "")
         try:
             cursor.execute("INSERT INTO MODULO VALUES (0, %s, %s, %s, %s, %s)", (nombre, alfa, beta, gamma, kappa))
         except Exception:

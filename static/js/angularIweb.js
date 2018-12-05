@@ -16,11 +16,16 @@ app.config(function ($routeProvider) {
         .when('/busquedas', {
             templateUrl: 'busquedasServer',
             controller: 'busquedasController'
-        })
-        .otherwise({
-            templateUrl: 'principal',
-            controller: 'principalController'
-        });
+        }).when('/crearModulo', {
+        templateUrl: 'vistaCrearModulo',
+        controller: 'crearModuloController'
+    }).when('/crearCampana', {
+        templateUrl: 'vistaCrearCampana',
+        controller: 'crearCampanaController'
+    }).otherwise({
+        templateUrl: 'principal',
+        controller: 'principalController'
+    });
 });
 app.factory('importarModulo', function () {
     var modulo = {
@@ -236,8 +241,8 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
             $scope.listacampana = mostrarCampanasModulo.borrarModulo(id, $scope.listacampana);
         }
     };
-    $scope.addModulo = function () {
-        $location.path('/addModulo');
+    $scope.crearModulo = function () {
+        $location.path('/crearModulo');
         $route.reload();
     };
     $scope.editarModulo = function (id) {
@@ -268,22 +273,21 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
             if (response.data == true) {
                 $scope.listacampana = mostrarCampanasModulo.borrarModulo(modulo, $scope.listacampana);
                 mostrarCampanasModulo.anadirCampanas(modulo).then(function (promise) {
-                        if ($scope.listacampana === undefined) {
-                            $scope.listacampana = promise;
-                        } else {
-                            $scope.listacampana = $scope.listacampana.concat(promise);
-                        }
+                    if ($scope.listacampana === undefined) {
+                        $scope.listacampana = promise;
+                    } else {
+                        $scope.listacampana = $scope.listacampana.concat(promise);
+                    }
                 });
                 mostrarCampanasModulo.anadirModulo(modulo);
-
 
             } else {
                 $scope.errorBorrado = "No se pudo borrar"
             }
         });
     };
-    $scope.addCampana = function () {
-        $location.path('/addCampana');
+    $scope.crearCampana = function () {
+        $location.path('/crearCampana');
         $route.reload();
     };
     $scope.editCampana = function (id) {
@@ -295,19 +299,108 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
 app.controller('editarModuloController', function ($scope, $http, $location, $route) {
     $scope.crearModulo = function () {
         //TODO WEB SERVICE
-        $location.path('testMain.html');
+        $location.path('busquedas.html');
         $route.reload();
     }
     $scope.editarModulo = function () {
         //TODO WEB SERVICE
-        $location.path('/testMain.html');
+        $location.path('/busquedas.html');
         $route.reload();
     }
     $scope.volver = function () {
-        $location.path('/testMain.html');
+        $location.path('/busquedas.html');
         $route.reload();
     }
 });
+
+app.controller('crearModuloController', function ($scope, $http, $location, $route, importarModulo) {
+    var config = {
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8;'
+        }
+    };
+
+    $scope.crearModulo = function () {
+        var url = "http://localhost:5000/iweb/v1/modulos";
+
+        var nombre = $scope.nombre;
+        var alfa = $scope.alfa;
+        var gamma = $scope.gamma;
+        var beta = $scope.beta;
+        var kappa = $scope.kappa;
+
+        if (nombre == null || alfa == null || gamma == null || beta == null || kappa == null) {
+            $scope.errorCreado = "Rellene todos los campos";
+        } else {
+            importarModulo.setName(nombre);
+            importarModulo.setAlfa(alfa);
+            importarModulo.setBeta(beta);
+            importarModulo.setGamma(gamma);
+            importarModulo.setKappa(kappa);
+            $http.post(url, importarModulo.getModulo(), config).then(function (response) {
+                if (response.data == true) {
+                    $scope.erroNombre = "";
+                    $scope.errorCreado = "";
+                    $location.path('/modulos');
+                    $route.reload();
+                } else {
+                    $scope.erroNombre = "Ya existe un modulo con este nombre";
+                }
+            });
+        }
+    };
+
+
+    $scope.goBack = function () {
+        $location.path('/modulos');
+        $route.reload();
+    };
+});
+
+app.controller('crearCampanaController', function ($http, $location, $route, $scope) {
+    var config = {
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8;'
+        }
+    };
+
+    $http.get("http://localhost:5000/iweb/v1/modulos", config).then(function (response) {
+        $scope.lista = response.data;
+    }, function (response) {
+    });
+
+    $scope.crearCampana = function () {
+        var url = "http://localhost:5000/iweb/v1/campanas";
+
+        var moduloID = $scope.moduloSeleccionado;
+        moduloID = moduloID.id;
+        var nombre = $scope.nombre;
+        var fechaIni = $scope.fechaIni;
+        var fechaFin = $scope.fechaFin;
+        var validformat = /^\d{4}\/\d{2}\/\d{2}$/;
+        if (fechaIni == null || fechaFin == null) {
+            $scope.errorCreado = "Rellene el campo de búsqueda"
+        } else if (!validformat.test(fechaIni) || !validformat.test(fechaFin)) {
+            $scope.errorFecha = "Formato de fechas no válidos"
+        } else {
+            $http({
+                url: url,
+                method: "POST",
+                config: config,
+                params: {id: moduloID, fechaIni: fechaIni, fechaFin: fechaFin, nombre: nombre}
+            }).then(function (response) {
+                $location.path('/modulos');
+                $route.reload();
+            });
+        }
+    };
+
+    $scope.goBack = function () {
+        $location.path('/modulos');
+        $route.reload();
+    };
+});
+
 
 app.controller('busquedasController', function ($scope, $http, $location, $route) {
 
