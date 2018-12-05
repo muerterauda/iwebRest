@@ -24,7 +24,6 @@ cursor = mysql.connect().cursor()
 def getIndex():
     return render_template("index.html")
 
-
 @app.route("/principal")
 def getPrincipal():
     return render_template("principal.html")
@@ -143,12 +142,13 @@ def deleteModulo():  # Eliminar un modulo a partir de su id
 @bp.route("/modulos", methods=['PUT'])
 def updateModulo():  # Actualizar un modulo a partir de su id
     res = True
-    id = request.values.get("id")
-    nombre = request.values.get("nombre")
-    alpha = request.values.get("alpha")
-    beta = request.values.get("beta")
-    gamma = request.values.get("gamma")
-    kappa = request.values.get("kappa")
+    json = request.json
+    id = json.get("id")
+    nombre = json.get("nombre")
+    alpha = json.get("alpha")
+    beta = json.get("beta")
+    gamma = json.get("gamma")
+    kappa = json.get("kappa")
     if (not nombre) and (not alpha) and (not beta) and (not gamma) and (not kappa):
         res = False
     else:

@@ -8,7 +8,7 @@ app.config(function ($routeProvider) {
             templateUrl : 'vistaModulos',
             controller: 'modulosController'
         })
-        .when('/editarModulo', {
+        .when('/editModulo/:id', {
             templateUrl : 'editarModulo',
             controller: 'editarController'
         })
@@ -17,6 +17,7 @@ app.config(function ($routeProvider) {
             controller: 'principalController'
         });
 });
+
 app.factory('importarModulo', function () {
     var modulo = {
         nombre: null,
@@ -220,7 +221,7 @@ app.controller('modulosController', function ($scope, $http,$location, $route, m
         $route.reload();
     };
     $scope.editarModulo = function(id) {
-        $location.path('/editarModulo');
+        $location.path('/editModulo/'+id);
         $route.reload();
     };
     $scope.borrarModulo = function(id) {
@@ -237,19 +238,59 @@ app.controller('modulosController', function ($scope, $http,$location, $route, m
     }
 });
 
-app.controller('editarModuloController', function($scope, $http,$location, $route){
-    $scope.crearModulo = function(){
-        //TODO WEB SERVICE
-        $location.path('testMain.html');
-        $route.reload();
+app.factory('editModuloAssist', function ($http) {
+    var modulo = {
+        nombre: null,
+        alfa: null,
+        beta: null,
+        gamma: null,
+        kappa: null
+    };
+    function getModulo(id){
+        var url = "http://localhost:5000/iweb/v1/modulos?id="+id;
+        var config={
+            headers:{
+                'Content-Type': 'application/json;charset=utf-8;'
+            }
+        };
+        var promise=$http.get(url,config);
+        promise.then(function (response) {
+            modulo.nombre = response.data[0].nombre;
+            modulo.alfa = response.data[0].alfa;
+            modulo.beta = response.data[0].beta;
+            modulo.kappa = response.data[0].kappa;
+            modulo.gamma = response.data[0].gamma;
+        });
+        return modulo;
     }
+    return {
+        getModulo: getModulo,
+    };
+});
+
+app.controller('editarController', function($scope, $http, $location, $route, $routeParams, editModuloAssist){
+    var id = $routeParams.id;
+    var modulo = editModuloAssist.getModulo(id);
+    console.log(modulo);
+    //$scope.nombreEditar = modulo.nombre;
     $scope.editarModulo = function(){
-        //TODO WEB SERVICE
-        $location.path('/testMain.html');
+        /*var url = "http://localhost:5000/iweb/v1/modulos";
+        var config={
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8;'
+            }
+        };
+        importarModulo.setName($scope.nombreEditar);
+        importarModulo.setAlfa($scope.alfaEditar);
+        importarModulo.setBeta($scope.betaEditar);
+        importarModulo.setGamma($scope.gammaEditar);
+        importarModulo.setKappa($scope.kappaEditar);
+        $http.put(url, )*/
+        $location.path('/editarModulo.html');
         $route.reload();
     }
     $scope.volver = function () {
-        $location.path('/testMain.html');
+        $location.path('/editarModulo.html');
         $route.reload();
     }
 });
