@@ -141,6 +141,7 @@ def createModulo():  # Crear un modulo con sus parametros (opcionales todos meno
 def deleteModulo():  # Eliminar un modulo a partir de su id
     res = True
     id = request.values.get("id")
+    print(id)
     if not id:
         res = False
     else:

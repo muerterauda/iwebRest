@@ -245,8 +245,32 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
         $route.reload();
     };
     $scope.borrarModulo = function (id) {
-        //Consulta a servicios
-        $route.reload();
+        $http({
+            url: url,
+            method: "DELETE",
+            config: config,
+            params: {id: id}
+        }).then(function (response) {
+            if (response.data == true) {
+                $route.reload();
+            } else {
+                $scope.errorBorrado = "No se pudo borrar"
+            }
+        });
+    };
+     $scope.borrarCampana = function (id) {
+        $http({
+            url: url.replace('modulos', 'campanas'),
+            method: "DELETE",
+            config: config,
+            params: {id: id}
+        }).then(function (response) {
+            if (response.data == true) {
+                $route.reload();
+            } else {
+                $scope.errorBorrado = "No se pudo borrar"
+            }
+        });
     };
     $scope.addCampana = function () {
         $location.path('/addCampana');
