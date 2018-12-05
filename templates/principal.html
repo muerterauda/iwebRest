@@ -1,12 +1,15 @@
-<div class="container text-center">
+<div class="container text-center" ng-controller="loginController">
         <div>
+            <input type="button" ng-click="onGoogleLogin()" value="Login"><br/>
+            {[{ gmail.username }]}
+            {[{ gmail.email }]}
             <form>
-                <button class="btn btn-primary row" type="button" ng-click="verModulos()">Ver M&oacute;dulos</button>
+                <button class="btn btn-primary row" type="button" ng-click="verModulos()" ng-show="Show">Ver M&oacute;dulos</button>
             </form>
             <form>
                 <input type="file" id="file" value="file">
                 <br/><br/>
-                <button class="btn btn-secondary row" type="button" ng-click="importar()">Importar Archivo Seleccionado</button>
+                <button class="btn btn-secondary row" type="button" ng-click="importar()" ng-show="Show">Importar Archivo Seleccionado</button>
             </form>
         </div>
         <div class="text-success">

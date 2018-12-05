@@ -110,10 +110,51 @@ app.factory('mostrarCampanasModulo', function ($http) {
           restablecerCheckbox:restablecerCheckbox
     };
 })
+app.controller('loginController', function ($scope) {
+    $scope.gmail = {
+        username: "",
+        email: ""
+    };
+
+    $scope.onGoogleLogin = function () {
+        var params = {
+            'clientid': '286209566151-fovn4cmm3nvhsdjo0ns775r8n6ianoqm.apps.googleusercontent.com',
+            'cookiepolicy': 'single_host_origin',
+            'callback': function (result) {
+                if(result['status']['signed_in']){
+                    var request = gapi.client.plus.people.get(
+                        {
+                            'userId': 'me'
+                        }
+                    );
+                    request.execute(function(resp){
+                        $scope.$apply(function(){
+                            $scope.gmail.username = resp.displayName;
+                            $scope.gmail.email = resp.emails[0].value;
+
+                            if($scope.gmail.email.localeCompare("alb.majora@gmail.com") === 0){
+                                $scope.Show = true;
+                            } else {
+                                $scope.Show = false
+                            }
+                        });
+                    });
+
+                }
+            },
+            'approvalprompt': 'force',
+            'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read'
+        };
+
+        gapi.auth.signIn(params);
+    }
+})
+
 app.controller('principalController', function ($scope, $http, $location, $route, importarModulo) {
 
     $scope.mensaje = "";
     $scope.error = "";
+    $scope.Show = false;
 
     $scope.verModulos = function () {
         $location.path('/modulos');
