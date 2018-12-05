@@ -397,7 +397,7 @@ app.controller('crearModuloController', function ($scope, $http, $location, $rou
                     $location.path('/modulos');
                     $route.reload();
                 } else {
-                    $scope.erroNombre = "Ya existe un modulo con este nombre";
+                    $scope.errorNombre = "Ya existe un modulo con este nombre";
                 }
             });
         }
