@@ -258,7 +258,7 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
             }
         });
     };
-     $scope.borrarCampana = function (id) {
+    $scope.borrarCampana = function (id, modulo) {
         $http({
             url: url.replace('modulos', 'campanas'),
             method: "DELETE",
@@ -266,7 +266,17 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
             params: {id: id}
         }).then(function (response) {
             if (response.data == true) {
-                $route.reload();
+                $scope.listacampana = mostrarCampanasModulo.borrarModulo(modulo, $scope.listacampana);
+                mostrarCampanasModulo.anadirCampanas(modulo).then(function (promise) {
+                        if ($scope.listacampana === undefined) {
+                            $scope.listacampana = promise;
+                        } else {
+                            $scope.listacampana = $scope.listacampana.concat(promise);
+                        }
+                });
+                mostrarCampanasModulo.anadirModulo(modulo);
+
+
             } else {
                 $scope.errorBorrado = "No se pudo borrar"
             }
