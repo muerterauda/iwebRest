@@ -1,25 +1,27 @@
 <div class="container-fluid">
     <h1>Editar M&oacute;dulo</h1>
     <form>
+        <i><label class="error">{[{ errorOperacion }]}</label></i><br/><br/>
+
         <b>Nombre:</b> <br/>
-        <input type="text" ng-model="nombreEditar">
-        <i><label class="error">{{ errorNombre }}</label></i><br/><br/>
+        <input type="text" ng-model="modulo.nombre">
+        <i><label class="error">{[{ errorNombre }]}</label></i><br/><br/>
 
         <b>&alpha;:</b> <br/>
-        <input type="number" ng-model="alfaEditar">
-        <i><label class="error">{{ errorAlfa }}</label></i><br/><br/>
+        <input type="number" ng-model="modulo.alfa">
+        <i><label class="error">{[{ errorAlfa }]}</label></i><br/><br/>
 
         <b>&beta;:</b> <br/>
-        <input type="number" ng-model="betaEditar">
-        <i><label class="error">{{ errorBeta }}</label></i><br/><br/>
+        <input type="number" ng-model="modulo.beta">
+        <i><label class="error">{[{ errorBeta }]}</label></i><br/><br/>
 
         <b>&gamma;:</b> <br/>
-        <input type="number" ng-model="gammaEditar">
-        <i><label class="error">{{ errorGamma }}</label></i><br/><br/>
+        <input type="number" ng-model="modulo.gamma">
+        <i><label class="error">{[{ errorGamma }]}</label></i><br/><br/>
 
         <b>&kappa;:</b> <br/>
-        <input type="number" ng-model="kappaEditar">
-        <i><label class="error">{{ errorKappa }}</label></i><br/><br/>
+        <input type="number" ng-model="modulo.kappa">
+        <i><label class="error">{[{ errorKappa }]}</label></i><br/><br/>
 
         <div class="btn-group">
             <button ng-click="editarModulo()" class="btn btn-secondary row boton">Editar M&oacute;dulo</button>

@@ -18,7 +18,7 @@ app.config(function($routeProvider) {
             controller: 'controllerCampana'
     })
         .otherwise({
-            templateUrl: 'testMain.html',
+            templateUrl: 'busquedas.html',
             controller: 'controllerTest'
         });
 });
@@ -150,17 +150,17 @@ app.controller('controllerTest', function ($scope, $http,$location, $route, most
 app.controller('controllerCampana',  function ($scope, $http,$location, $route) {
     $scope.crearCampana = function(){
         //TODO WEB SERVICE
-        $location.path('/testMain.html');
+        $location.path('/busquedas.html');
         $route.reload();
     }
     $scope.editarCampana = function(){
         //TODO WEB SERVICE
-        $location.path('/testMain.html');
+        $location.path('/busquedas.html');
         $route.reload();
     }
 
     $scope.volver = function () {
-        $location.path('/testMain.html');
+        $location.path('/busquedas.html');
         $route.reload();
     }
 });
@@ -168,16 +168,16 @@ app.controller('controllerCampana',  function ($scope, $http,$location, $route) 
 app.controller('controllerModulo', function($scope, $http,$location, $route){
     $scope.crearModulo = function(){
         //TODO WEB SERVICE
-        $location.path('testMain.html');
+        $location.path('busquedas.html');
         $route.reload();
     }
     $scope.editarModulo = function(){
         //TODO WEB SERVICE
-        $location.path('/testMain.html');
+        $location.path('/busquedas.html');
         $route.reload();
     }
     $scope.volver = function () {
-        $location.path('/testMain.html');
+        $location.path('/busquedas.html');
         $route.reload();
     }
 });
