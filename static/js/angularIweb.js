@@ -1,6 +1,47 @@
 var app = angular.module('appIweb', ['ngRoute']).config(function($interpolateProvider){
     $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-});;
+});
+var appTiempo = angular.module('tiempo', []).config(function($interpolateProvider){
+    $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+});
+appTiempo.controller('tiempoController', function ($scope, $http, $location) {
+    var url = "http://api.openweathermap.org/data/2.5/weather?id=6359472&units=metric&lang=es&appid=aa0461b0def5f676726c39c7ab5336b8";
+    var config={
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+             };
+            $http.get(url, config).then(function (response) {
+               var tiempo=response.data;
+               var weather=tiempo.weather;
+                    $scope.descripcion=weather[0].description;
+                    $scope.icon="http://openweathermap.org/img/w/"+weather[0].icon+".png";
+               $scope.main=tiempo.main;
+               $scope.wind=tiempo.wind.speed;
+               $scope.clouds=tiempo.clouds.all;
+               $scope.tiempoError=null;
+            }, function (response) {
+                $scope.tiempoError = "Fallo al conectar con la API del tiempo";
+            });
+});
+var appNasa = angular.module('nasa', []).config(function($interpolateProvider){
+    $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+});
+
+appNasa.controller('nasaController', function ($scope, $http, $location) {
+    var url = "https://api.nasa.gov/planetary/apod?api_key=CvMMimlm8ma5R46WmP33MuVUrJLz4aMxJU0OU9Nt";
+    var config={
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+             };
+            $http.get(url, config).then(function (response) {
+               var nasa=response.data;
+               $scope.iconNasa=nasa.url;
+            }, function (response) {
+                $scope.tiempoError="Fallo al conectar con la API de la Nasa";
+            });
+});
 
 app.config(function ($routeProvider) {
     $routeProvider
@@ -109,7 +150,7 @@ app.factory('mostrarCampanasModulo', function ($http) {
           anadirCampanas: resetAnadir,
           restablecerCheckbox:restablecerCheckbox
     };
-})
+});
 app.controller('principalController', function ($scope, $http, $location, $route, importarModulo) {
 
     $scope.mensaje = "";
@@ -254,3 +295,5 @@ app.controller('editarModuloController', function($scope, $http,$location, $rout
     }
 });
 
+angular.bootstrap(document.getElementById("weatherApp"), ['tiempo']);
+angular.bootstrap(document.getElementById("nasaApp"), ['nasa']);
