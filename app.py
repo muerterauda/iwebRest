@@ -67,7 +67,7 @@ def updateCampana():  # editar Campaña asociada a Modulo con ID
 
 
 @bp.route("/campanas", methods=['DELETE'])
-def deleteCamapana():  #
+def deleteCamapana():  # Elimina una campana asignada a un modulo
     id = request.values.get('id')
     valor = True
     numero = cursor.execute("DELETE FROM campana WHERE id = %s", (id,))
@@ -151,4 +151,5 @@ def updateModulo():  # Actualizar un modulo a partir de su id
 
 
 app.register_blueprint(bp, url_prefix='/iweb/v1/')
-app.run();
+if __name__ == "__main__":
+    app.run()
