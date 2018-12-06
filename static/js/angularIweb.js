@@ -319,7 +319,6 @@ app.controller('editarController', function($scope, $http, $location, $route, $r
     $scope.editarModulo = function() {
         var modulo = $scope.modulo;
         if (!modulo.nombre) {
-            console.log('HISJDKFJ')
             $scope.errorNombre = 'El campo no puede estar vacío.';
         }
         if (!modulo.alfa) {
