@@ -132,7 +132,7 @@ app.factory('mostrarCampanasModulo', function ($http) {
     };
 })
 
-app.factory('emailCredentials', function ($scope) {
+app.factory('emailCredentials', function () {
     var gmail = {
         username: "",
         email: ""
@@ -156,9 +156,24 @@ app.factory('emailCredentials', function ($scope) {
         getGmail: getGmail,
 
     };
-})
+});
 
-app.controller('loginController', function ($scope, emailCredentials) {
+function validEmail(emailCredentials) {
+    var email1 = "pruebaparaingweb@gmail.com";
+    var email2 = "alb.majora@gmail.com";
+    var email3 = "gapriser@gmail.com";
+    var email4 = "juanjogr19971901@gmail.com";
+
+
+    var res =   emailCredentials.getGmail().email.localeCompare(email1) === 0 ||
+                emailCredentials.getGmail().email.localeCompare(email2) === 0 ||
+                emailCredentials.getGmail().email.localeCompare(email3) === 0 ||
+                emailCredentials.getGmail().email.localeCompare(email4) === 0;
+
+    return res;
+}
+
+app.controller('loginController', function ($scope, $http, emailCredentials) {
 
     $scope.onGoogleLogin = function () {
         var params = {
@@ -176,7 +191,7 @@ app.controller('loginController', function ($scope, emailCredentials) {
                             emailCredentials.setUserName(resp.displayName);
                             emailCredentials.setEmail(resp.emails[0].value);
 
-                            if(emailCredentials.getGmail().email.localeCompare("alb.majora@gmail.com") === 0){
+                            if(validEmail(emailCredentials)){
                                 $scope.Show = true;
                                 $scope.mensaje = "Bienvenido, " + emailCredentials.getGmail().username;
                             } else {
@@ -194,13 +209,34 @@ app.controller('loginController', function ($scope, emailCredentials) {
 
         gapi.auth.signIn(params);
     }
+    
+    $scope.onGoogleLogout = function () {
+        var token = gapi.auth.getToken();
+        if (token) {
+            var accessToken = gapi.auth.getToken().access_token;
+            if (accessToken) {
+                $http({
+                    method: 'GET',
+                    url: 'https://accounts.google.com/o/oauth2/revoke?token=' + accessToken
+                });
+            }
+        }
+        gapi.auth.setToken(null);
+        gapi.auth.signOut();
+        $scope.mensaje = emailCredentials.setUserName();    // Esta línea demuestra que se ha realizado el Logout con éxito (no devuelve nada).
+        $scope.Show = false;
+    }
 })
 
-app.controller('principalController', function ($scope, $http, $location, $route, importarModulo) {
+app.controller('principalController', function ($scope, $http, $location, $route, importarModulo, emailCredentials) {
 
     $scope.mensaje = "";
     $scope.error = "";
-    $scope.Show = false;
+    if(emailCredentials.getGmail().email.localeCompare("alb.majora@gmail.com") === 0){
+        $scope.Show = true;
+    } else {
+        $scope.Show = false
+    }
 
     $scope.verModulos = function () {
         $location.path('/modulos');
