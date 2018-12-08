@@ -232,7 +232,7 @@ app.controller('principalController', function ($scope, $http, $location, $route
 
     $scope.mensaje = "";
     $scope.error = "";
-    if(emailCredentials.getGmail().email.localeCompare("alb.majora@gmail.com") === 0){
+    if(validEmail(emailCredentials)){
         $scope.Show = true;
     } else {
         $scope.Show = false
