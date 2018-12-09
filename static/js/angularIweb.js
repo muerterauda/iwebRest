@@ -42,6 +42,8 @@ appNasa.controller('nasaController', function ($scope, $http, $location) {
                 $scope.tiempoError="Fallo al conectar con la API de la Nasa";
             });
 });
+});
+;
 
 app.config(function ($routeProvider) {
     $routeProvider
@@ -174,12 +176,121 @@ app.factory('mostrarCampanasModulo', function ($http) {
     };
 });
 app.controller('principalController', function ($scope, $http, $location, $route, importarModulo) {
+})
+
+app.factory('emailCredentials', function () {
+    var gmail = {
+        username: "",
+        email: ""
+    };
+
+    function setUserName(username) {
+        gmail.username = username;
+    }
+
+    function setEmail(email) {
+        gmail.email = email;
+    }
+
+    function getGmail() {
+        return gmail;
+    }
+
+    return {
+        setUserName: setUserName,
+        setEmail: setEmail,
+        getGmail: getGmail,
+
+    };
+});
+
+function validEmail(emailCredentials) {
+    var email1 = "pruebaparaingweb@gmail.com";
+    var email2 = "alb.majora@gmail.com";
+    var email3 = "gapriser@gmail.com";
+    var email4 = "juanjogr19971901@gmail.com";
+
+
+    var res =   emailCredentials.getGmail().email.localeCompare(email1) === 0 ||
+                emailCredentials.getGmail().email.localeCompare(email2) === 0 ||
+                emailCredentials.getGmail().email.localeCompare(email3) === 0 ||
+                emailCredentials.getGmail().email.localeCompare(email4) === 0;
+
+    return res;
+}
+
+app.controller('loginController', function ($scope, $http, emailCredentials) {
+
+    $scope.onGoogleLogin = function () {
+        var params = {
+            'clientid': '286209566151-fovn4cmm3nvhsdjo0ns775r8n6ianoqm.apps.googleusercontent.com',
+            'cookiepolicy': 'single_host_origin',
+            'callback': function (result) {
+                if(result['status']['signed_in']){
+                    var request = gapi.client.plus.people.get(
+                        {
+                            'userId': 'me'
+                        }
+                    );
+                    request.execute(function(resp){
+                        $scope.$apply(function(){
+                            emailCredentials.setUserName(resp.displayName);
+                            emailCredentials.setEmail(resp.emails[0].value);
+
+                            if(validEmail(emailCredentials)){
+                                $scope.Show = true;
+                                $scope.mensaje = "Bienvenido, " + emailCredentials.getGmail().username;
+                            } else {
+                                $scope.Show = false
+                                $scope.mensaje = "Usuario no registrado"
+                            }
+                        });
+                    });
+
+                }
+            },
+            'approvalprompt': 'force',
+            'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read'
+        };
+
+        gapi.auth.signIn(params);
+    }
+
+    $scope.onGoogleLogout = function () {
+        var token = gapi.auth.getToken();
+        if (token) {
+            var accessToken = gapi.auth.getToken().access_token;
+            if (accessToken) {
+                $http({
+                    method: 'GET',
+                    url: 'https://accounts.google.com/o/oauth2/revoke?token=' + accessToken
+                });
+            }
+        }
+        gapi.auth.setToken(null);
+        gapi.auth.signOut();
+        $scope.mensaje = emailCredentials.setUserName();    // Esta línea demuestra que se ha realizado el Logout con éxito (no devuelve nada).
+        $scope.Show = false;
+    }
+})
+
+app.controller('principalController', function ($scope, $http, $location, $route, importarModulo, emailCredentials) {
 
     $scope.mensaje = "";
     $scope.error = "";
+    if(validEmail(emailCredentials)){
+        $scope.Show = true;
+    } else {
+        $scope.Show = false
+    }
 
     $scope.verModulos = function () {
         $location.path('/modulos');
+        $route.reload();
+    };
+
+    $scope.busquedas = function () {
+        $location.path('/busquedas');
         $route.reload();
     };
 
@@ -616,7 +727,8 @@ app.controller('busquedasController', function ($scope, $http, $location, $route
         $location.path('/');
         $location.path('/editarModulo.html');
         $route.reload();
-    }
+    };
+
 });
 
 angular.bootstrap(document.getElementById("weatherApp"), ['tiempo']);
