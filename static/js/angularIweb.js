@@ -48,12 +48,13 @@ app.config(function ($routeProvider) {
         .when('/modulos', {
             templateUrl: 'vistaModulos',
             controller: 'modulosController'
-        })
-        .when('/editModulo/:id', {
+        }).when('/editModulo/:id', {
             templateUrl : 'editarModulo',
-            controller: 'editarController'
-        })
-        .when('/busquedas', {
+            controller: 'editarModuloController'
+        }).when('/editCampana/:id', {
+            templateUrl : 'editarCampana',
+            controller: 'editarCampanaController'
+        }).when('/busquedas', {
             templateUrl: 'busquedasServer',
             controller: 'busquedasController'
         }).when('/crearModulo', {
@@ -331,13 +332,13 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
         $location.path('/crearCampana');
         $route.reload();
     };
-    $scope.editCampana = function (id) {
-        $location.path('/editCampana');
+    $scope.editarCampana = function (id) {
+        $location.path('/editCampana/'+id);
         $route.reload();
     }
 });
 
-app.controller('editarController', function($scope, $http, $location, $route, $routeParams){
+app.controller('editarModuloController', function($scope, $http, $location, $route, $routeParams){
 
     $scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
 
@@ -398,6 +399,75 @@ app.controller('editarController', function($scope, $http, $location, $route, $r
             });
         }
     }
+
+    $scope.volver = function () {
+        $location.path('/modulos');
+        $route.reload();
+    };
+});
+
+app.controller('editarCampanaController', function($scope, $http, $location, $route, $routeParams){
+
+    $scope.errorCreado = '';
+    /*$scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
+
+    var url = "http://localhost:5000/iweb/v1/campanas?id=" + $routeParams.id;
+    var config={
+        headers:{
+            'Content-Type': 'application/json;charset=utf-8;'
+        }
+    };
+
+    $http({
+        url: url,
+        method: "GET",
+        config: config,
+    }).then(function (response) {
+        $scope.modulo = response.data[0];
+    });
+
+    $scope.editarModulo = function() {
+        var modulo = $scope.modulo;
+        if (!modulo.nombre) {
+            $scope.errorNombre = 'El campo no puede estar vacío.';
+        }
+        if (!modulo.alfa) {
+            $scope.errorAlfa = 'El campo no puede estar vacío';
+        }
+        if (!modulo.beta) {
+            $scope.errorBeta = 'El campo no puede estar vacío';
+        }
+        if (!modulo.gamma) {
+            $scope.errorGamma = 'El campo no puede estar vacío';
+        }
+        if (!modulo.kappa) {
+            $scope.errorKappa = 'El campo no puede estar vacío';
+        }
+
+        if (modulo.nombre && modulo.alfa && modulo.beta && modulo.kappa && modulo.gamma) {
+            $http({
+                url: 'http://localhost:5000/iweb/v1/modulos',
+                method: 'PUT',
+                config: config,
+                params: {
+                    id: $routeParams.id,
+                    nombre: modulo.nombre,
+                    alfa: modulo.alfa,
+                    beta: modulo.beta,
+                    kappa: modulo.kappa,
+                    gamma: modulo.gamma
+                }
+            }).then(function (response) {
+                if (response.data) {
+                    $scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
+                    $location.path('/modulos');
+                    $route.reload();
+                } else {
+                    $scope.errorOperacion = 'Error al almacenar los datos';
+                }
+            });
+        }
+    }*/
 
     $scope.volver = function () {
         $location.path('/modulos');
