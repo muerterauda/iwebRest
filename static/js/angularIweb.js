@@ -42,8 +42,6 @@ appNasa.controller('nasaController', function ($scope, $http, $location) {
                 $scope.tiempoError="Fallo al conectar con la API de la Nasa";
             });
 });
-});
-;
 
 app.config(function ($routeProvider) {
     $routeProvider

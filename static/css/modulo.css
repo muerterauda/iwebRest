@@ -7,35 +7,41 @@ and open the template in the editor.
     Created on : 24-may-2018, 11:20:50
     Author     : Paula
 */
-
-.botones{
-    content-align: center;
-    text-align: center;
-}
-.div_tabla_movimientos {
-    padding-top: 10px;
-    height: 100px;
-    overflow-y:scroll;
-}
-.error {
-    color: red;
-}
 .boton{
     margin: 10px;
-}
-.index{
-    margin: auto;
-    width: 30%;
-    position: relative;
-    text-align: center;
-    padding: 70px;
-}
-h1{
-    font-size: 5rem;
 }
 .row{
     padding:10px;
 }
 form{
     padding:20px;
+}
+.caja{
+    background-color: #e8ebef;
+    padding: 15px;
+    border-radius: 10px;
+}
+.image{
+    max-width: 100%;
+    max-height: 100%;
+}
+.title_operations{
+    max-width: 100%;
+    width: 50%;
+}
+.title_api{
+    background-color: #343a40;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+.welcome{
+    padding-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.error{
+    color: red;
+    padding: 10px;
 }

@@ -1,11 +1,8 @@
 <div class="container-fluid">
-    <h2>Editar Campa&ntilde;a</h2>
+    <div class="welcome">
+        <h2 class="title_api title_operations">Editar Campa&ntilde;a</h2>
+    </div>
     <form>
-        <div class="text-danger">
-            {[{errorCreado}]}
-        </div>
-
-        <label class="text-danger">{[{errorFecha}]}</label><br/>
 
         <b>Fecha Inicio: (yyyy/mm/dd) </b> <br/>
         <input type="text" ng-model="fechaIni"><br/><br/>
@@ -13,6 +10,8 @@
         <b>Fecha Fin: (yyyy/mm/dd) </b> <br/>
         <input type="text" ng-model="fechaFin"><br/><br/>
 
+        <div class="error">{[{errorCreado}]}</div>
+        <label class="error">{[{errorFecha}]}</label>
         <div class="btn-group">
             <button ng-click="editarCampana()" class="btn btn-secondary row boton">Editar Campa&ntilde;a</button>
             <button ng-click="volver()" class="btn btn-secondary row boton">Cancelar</button>

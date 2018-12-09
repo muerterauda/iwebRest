@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/modulo.css">
 </head>
-<body>
+<body>>
+<nav id="navbar" class="navbar navbar-dark bg-dark">
+    <a class=navbar-brand href="http://localhost:5000/"><h2>PVSHOWER</h2></a>
+</nav>
 <div class="container-fluid">
     <div class="row">
         <div ng-app="appIweb" class="col-12 text-center col-lg-8">
-            <a href="http://localhost:5000/" style="color: #000;"><h1 class="text-center"><b><u>PVSHOWER</u></b></h1>
-            </a>
             <ng-view>
 
             </ng-view>
@@ -21,11 +22,10 @@
             <br/>
         </div>
         <div id="nasaApp" class="col-12 text-center col-lg-2 order-lg-first" ng-controller="nasaController">
-            <div class="border">
-                <br/>
-                <h3>La foto de la Nasa de hoy</h3>
+            <div class="caja">
+                <h4 class="title_api">La foto de la Nasa de hoy</h4>
                 <a href="{[{iconNasa}]}" target="_blank">
-                    <img ng-src="{[{iconNasa}]}" ng-style="{ 'width': '200px', 'height':'200px'}">
+                    <img class="image" ng-src="{[{iconNasa}]}">
                 </a>
                 <p><a href="{[{iconNasa}]}" target="_blank">Ampliar</a></p>
                 <div class="text-danger">
@@ -33,20 +33,18 @@
                 </div>
             </div>
             <br/>
-            <br/>
         </div>
 
         <div id="weatherApp" class="col-12 text-center col-lg-2" ng-controller="tiempoController">
-            <div class="border">
-                <br/>
-                <h3>El tiempo en Málaga</h3>
+            <div class="caja">
+                <h4 class="title_api">El tiempo en Málaga</h4>
                 <img ng-src="{[{icon}]}">
-                <p>Descripcion: {[{descripcion}]}</p>
-                <p>Temperatura: {[{main.temp}]} ºC</p>
-                <p>Presion: {[{main.pressure}]} mbar</p>
-                <p>Humedad: {[{main.humidity}]} %</p>
-                <p>Velocidad del viento: {[{wind}]} m/s</p>
-                <p>Nubes: {[{clouds}]} %</p>
+                <p><b>Descripci&oacute;cn:</b> {[{descripcion}]}</p>
+                <p><b>Temperatura:</b> {[{main.temp}]} ºC</p>
+                <p><b>Presion:</b> {[{main.pressure}]} mbar</p>
+                <p><b>Humedad:</b> {[{main.humidity}]} %</p>
+                <p><b>Velocidad del viento:</b> {[{wind}]} m/s</p>
+                <p><b>Nubes:</b> {[{clouds}]} %</p>
                 <div class="text-danger">
                     {[{ tiempoError }]}
                 </div>

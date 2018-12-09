@@ -1,7 +1,8 @@
 <div class="container-fluid">
-    <h2>Editar M&oacute;dulo</h2>
+    <div class="welcome">
+        <h2 class="title_api title_operations">Editar M&oacute;dulo</h2>
+    </div>
     <form>
-        <i><label class="error">{[{ errorOperacion }]}</label></i><br/><br/>
 
         <b>Nombre:</b> <br/>
         <input type="text" ng-model="modulo.nombre">
@@ -23,6 +24,7 @@
         <input type="number" ng-model="modulo.kappa">
         <i><label class="error">{[{ errorKappa }]}</label></i><br/><br/>
 
+        <i><label class="error">{[{ errorOperacion }]}</label></i>
         <div class="btn-group">
             <button ng-click="editarModulo()" class="btn btn-secondary row boton">Editar M&oacute;dulo</button>
             <button  ng-click="volver()" class="btn btn-secondary row boton">Cancelar</button>
