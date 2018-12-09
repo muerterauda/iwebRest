@@ -51,7 +51,7 @@ app.config(function ($routeProvider) {
         }).when('/editModulo/:id', {
             templateUrl : 'editarModulo',
             controller: 'editarModuloController'
-        }).when('/editCampana/:id', {
+        }).when('/editCampana/:idCampana', {
             templateUrl : 'editarCampana',
             controller: 'editarCampanaController'
         }).when('/busquedas', {
@@ -408,66 +408,54 @@ app.controller('editarModuloController', function($scope, $http, $location, $rou
 
 app.controller('editarCampanaController', function($scope, $http, $location, $route, $routeParams){
 
-    $scope.errorCreado = '';
-    /*$scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
+    $scope.errorCreado = $scope.errorFecha = '';
 
-    var url = "http://localhost:5000/iweb/v1/campanas?id=" + $routeParams.id;
+    var url = "http://localhost:5000/iweb/v1/campanas?idCampana=" + $routeParams.idCampana;
     var config={
         headers:{
             'Content-Type': 'application/json;charset=utf-8;'
         }
     };
 
+    var validformat = /^\d{4}\/\d{2}\/\d{2}$/;
+
     $http({
         url: url,
         method: "GET",
         config: config,
     }).then(function (response) {
-        $scope.modulo = response.data[0];
+        $scope.fechaIni = response.data[0]['fechaInicio'].replace(/-/g, '/');
+        $scope.fechaFin = response.data[0]['fechaFin'].replace(/-/g, '/');
     });
 
-    $scope.editarModulo = function() {
-        var modulo = $scope.modulo;
-        if (!modulo.nombre) {
-            $scope.errorNombre = 'El campo no puede estar vacío.';
-        }
-        if (!modulo.alfa) {
-            $scope.errorAlfa = 'El campo no puede estar vacío';
-        }
-        if (!modulo.beta) {
-            $scope.errorBeta = 'El campo no puede estar vacío';
-        }
-        if (!modulo.gamma) {
-            $scope.errorGamma = 'El campo no puede estar vacío';
-        }
-        if (!modulo.kappa) {
-            $scope.errorKappa = 'El campo no puede estar vacío';
-        }
-
-        if (modulo.nombre && modulo.alfa && modulo.beta && modulo.kappa && modulo.gamma) {
+    $scope.editarCampana = function() {
+        var fechaIni = $scope.fechaIni;
+        var fechaFin = $scope.fechaFin;
+        if (!fechaIni || !fechaFin) {
+            $scope.errorCreado = 'Todos los campos deben estar rellenos.';
+        } else if (!validformat.test(fechaIni) || !validformat.test(fechaFin)) {
+            $scope.errorFecha = "Formato de fechas no válidos.";
+        } else {
             $http({
-                url: 'http://localhost:5000/iweb/v1/modulos',
+                url: 'http://localhost:5000/iweb/v1/campanas',
                 method: 'PUT',
                 config: config,
                 params: {
-                    id: $routeParams.id,
-                    nombre: modulo.nombre,
-                    alfa: modulo.alfa,
-                    beta: modulo.beta,
-                    kappa: modulo.kappa,
-                    gamma: modulo.gamma
+                    id: $routeParams.idCampana,
+                    fechaIni: fechaIni,
+                    fechaFin: fechaFin
                 }
             }).then(function (response) {
                 if (response.data) {
-                    $scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
+                    $scope.errorCreado = $scope.errorFecha = '';
                     $location.path('/modulos');
                     $route.reload();
                 } else {
-                    $scope.errorOperacion = 'Error al almacenar los datos';
+                    $scope.errorCreado = 'Error al almacenar los datos';
                 }
             });
         }
-    }*/
+    }
 
     $scope.volver = function () {
         $location.path('/modulos');

@@ -33,6 +33,10 @@ def getPrincipal():
 def getModulosVista():
     return render_template("modulos.html")
 
+@app.route("/editarCampana")
+def getEditarCampanaVista():
+    return render_template("editarCampana.html")
+
 
 @app.route("/editarModulo")
 def getEditarModuloVista():
@@ -57,10 +61,13 @@ def getBusquedasVista():
 @bp.route("/campanas", methods=['GET'])
 def getCampana():  # obtener Campañas de Modulo
     id = request.values.get('id');
+    idCampana = request.values.get('idCampana')
     fechaIni = request.values.get('fechaIni');
     if (fechaIni is not None):
         fechaIni = fechaIni.replace('/', '-')
-    if (not fechaIni):
+    if(idCampana is not None):
+        cursor.execute("select * from campana where id = %s", (idCampana,))
+    elif (not fechaIni):
         cursor.execute("select * from campana where modulo = %s", (id,))
     else:
         cursor.execute("select * from campana where fechaInicio = %s", (fechaIni,))
@@ -91,11 +98,12 @@ def createCampana():  # crear Campaña asociada a Modulo con ID
 
 @bp.route("/campanas", methods=['PUT'])
 def updateCampana():  # editar Campaña asociada a Modulo con ID
-    fechaIni = request.values.get('fechaIni')
-    fechaFin = request.values.get('fechaFin')
+    id = request.values.get('id')
+    fechaIni = request.values.get('fechaIni').replace('/', '-')
+    fechaFin = request.values.get('fechaFin').replace('/', '-')
     valor = True
     numero = cursor.execute("UPDATE campana SET fechaInicio = %s, fechaFin = %s WHERE id = %s",
-                            (fechaIni, fechaFin,))
+                            (fechaIni, fechaFin, id,))
     if (numero == 0):
         valor = False
     return jsonify(valor)
