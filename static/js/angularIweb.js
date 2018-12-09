@@ -209,12 +209,14 @@ function validEmail(emailCredentials) {
     var email2 = "alb.majora@gmail.com";
     var email3 = "gapriser@gmail.com";
     var email4 = "juanjogr19971901@gmail.com";
+    var email5 = "paulatulipan@gmail.com";
 
 
     var res =   emailCredentials.getGmail().email.localeCompare(email1) === 0 ||
                 emailCredentials.getGmail().email.localeCompare(email2) === 0 ||
                 emailCredentials.getGmail().email.localeCompare(email3) === 0 ||
-                emailCredentials.getGmail().email.localeCompare(email4) === 0;
+                emailCredentials.getGmail().email.localeCompare(email4) === 0 ||
+                emailCredentials.getGmail().email.localeCompare(email5) === 0;
 
     return res;
 }
