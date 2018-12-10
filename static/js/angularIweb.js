@@ -180,7 +180,6 @@ app.factory('emailCredentials', function ($cookies) {
         email: "",
         id: ""
     };
-
     function setUserName(username) {
         gmail.username = username;
     }
@@ -201,7 +200,6 @@ app.factory('emailCredentials', function ($cookies) {
     function getCookie() {
         return $cookies.get('token');
     }
-
     return {
         setUserName: setUserName,
         setEmail: setEmail,
@@ -227,6 +225,7 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
                         $route.reload();
                     } else {
                         document.cookie = 'token' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                        emailCredentials.setEmail('');
                         $scope.Show = false;
                         $location.path('/');
                         $route.reload();
@@ -234,17 +233,20 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
                 } else {
                     document.cookie = 'token' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                     $scope.Show = false;
+                    emailCredentials.setEmail('');
                     $location.path('/');
                     $route.reload();
                 }
             }, function (response) {
                 document.cookie = 'token' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                 $scope.Show = false;
+                emailCredentials.setEmail('');
                 $location.path('/');
                 $route.reload();
             });
         } else {
             $scope.Show = false;
+            emailCredentials.setEmail('');
             $location.path('/');
             $route.reload();
         }
@@ -267,7 +269,7 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
     return $http.get(url, config).then(function (response) {
        return response.data;
     });
-    }
+    };
     $scope.onGoogleLogin = function () {
         var params = {
             'clientid': '286209566151-fovn4cmm3nvhsdjo0ns775r8n6ianoqm.apps.googleusercontent.com',
@@ -291,6 +293,9 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
                                 } else {
                                     $scope.Show = false
                                     $scope.mensaje2 = "Usuario no registrado"
+                                    emailCredentials.setUserName('');
+                                    emailCredentials.setEmail('');
+                                    emailCredentials.setId('');
                                 }
                                 $route.reload();
                             });
@@ -330,7 +335,6 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
 });
 
 app.controller('principalController', function ($scope, $http, $location, $route, importarModulo, emailCredentials) {
-
     $scope.mensaje = "";
     $scope.error = "";
     $scope.verModulos = function () {
@@ -396,6 +400,10 @@ app.controller('principalController', function ($scope, $http, $location, $route
 });
 
 app.controller('modulosController', function ($scope, $http, $location, $route, mostrarCampanasModulo, emailCredentials) {
+    if(emailCredentials.getGmail().email===''){
+        $location.path('/');
+        $route.reload();
+    }
     mostrarCampanasModulo.restablecerCheckbox();
     var url = "http://localhost:5000/iweb/v1/modulos";
     var config = {
@@ -500,7 +508,10 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
 });
 
 app.controller('editarModuloController', function ($scope, $http, $location, $route, $routeParams, emailCredentials) {
-
+    if(emailCredentials.getGmail().email===''){
+        $location.path('/');
+        $route.reload();
+    }
     $scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
 
     var url = "http://localhost:5000/iweb/v1/modulos?id=" + $routeParams.id;
@@ -567,7 +578,10 @@ app.controller('editarModuloController', function ($scope, $http, $location, $ro
 });
 
 app.controller('editarCampanaController', function ($scope, $http, $location, $route, $routeParams, emailCredentials) {
-
+    if(emailCredentials.getGmail().email===''){
+        $location.path('/');
+        $route.reload();
+    }
     $scope.errorCreado = $scope.errorFecha = '';
 
     var url = "http://localhost:5000/iweb/v1/campanas?idCampana=" + $routeParams.idCampana;
@@ -624,6 +638,10 @@ app.controller('editarCampanaController', function ($scope, $http, $location, $r
 });
 
 app.controller('crearModuloController', function ($scope, $http, $location, $route, importarModulo, emailCredentials) {
+    if(emailCredentials.getGmail().email===''){
+        $location.path('/');
+        $route.reload();
+    }
     var config = {
         headers: {
             'Content-Type': 'application/json;charset=utf-8;'
@@ -668,7 +686,10 @@ app.controller('crearModuloController', function ($scope, $http, $location, $rou
 });
 
 app.controller('crearCampanaController', function ($http, $location, $route, $scope, emailCredentials) {
-
+    if(emailCredentials.getGmail().email===''){
+        $location.path('/');
+        $route.reload();
+    }
     var config = {
         headers: {
             'Content-Type': 'application/json;charset=utf-8;'
@@ -712,7 +733,10 @@ app.controller('crearCampanaController', function ($http, $location, $route, $sc
 });
 
 app.controller('busquedasController', function ($scope, $http, $location, $route, emailCredentials) {
-
+    if(emailCredentials.getGmail().email===''){
+        $location.path('/');
+        $route.reload();
+    }
     var config = {
         headers: {
             'Content-Type': 'application/json;charset=utf-8;'
