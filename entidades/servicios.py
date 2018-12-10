@@ -58,6 +58,12 @@ def getCrearCampana():
 def getBusquedasVista():
     return render_template("busquedas.html")
 
+@app.route("/autenticacion")
+def validEmail():
+    email = request.values.get('email')
+    cursor.execute("select * from validgmail where email =%s", (email, ))
+    respuesta=cursor.rowcount != 0
+    return jsonify(respuesta)
 
 @bp.route("/campanas", methods=['GET'])
 def getCampana():  # obtener Campañas de Modulo
