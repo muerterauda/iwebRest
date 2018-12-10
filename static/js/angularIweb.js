@@ -686,6 +686,8 @@ app.controller('crearModuloController', function ($scope, $http, $location, $rou
 });
 
 app.controller('crearCampanaController', function ($http, $location, $route, $scope, emailCredentials) {
+    $scope.errorCreado=$scope.errorFecha='';
+
     if(emailCredentials.getGmail().email===''){
         $location.path('/');
         $route.reload();
@@ -704,7 +706,11 @@ app.controller('crearCampanaController', function ($http, $location, $route, $sc
         var url = "http://localhost:5000/iweb/v1/campanas";
 
         var moduloID = $scope.moduloSeleccionado;
-        moduloID = moduloID.id;
+        if(moduloID===''||moduloID===undefined||moduloID===null){
+             $scope.errorCreado="Seleccione un modulo";
+        }else {
+            moduloID = moduloID.id;
+        }
         var nombre = $scope.nombre;
         var fechaIni = $scope.fechaIni;
         var fechaFin = $scope.fechaFin;
@@ -719,7 +725,7 @@ app.controller('crearCampanaController', function ($http, $location, $route, $sc
                 method: "POST",
                 config: config,
                 params: {id: moduloID, fechaIni: fechaIni, fechaFin: fechaFin, nombre: nombre}
-            }).then(function (response) {
+            }).then(function () {
                 $location.path('/modulos');
                 $route.reload();
             });
