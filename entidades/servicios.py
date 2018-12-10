@@ -24,7 +24,6 @@ cursor = mysql.connect().cursor()
 def getIndex():
     return render_template("index.html")
 
-
 @app.route("/principal")
 def getPrincipal():
     return render_template("principal.html")
