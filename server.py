@@ -1,6 +1,5 @@
 import json
 from flask import Flask, jsonify, request, Blueprint, render_template
-import entidades.util
 from flask_cors import CORS
 from flask_restful import Api
 from flaskext.mysql import MySQL
@@ -20,56 +19,11 @@ CORS(app)
 cursor = mysql.connect().cursor()
 
 
-@app.route("/")
-def getIndex():
-    return render_template("index.html")
-
-
-@app.route("/principal")
-def getPrincipal():
-    return render_template("principal.html")
-
-
-@app.route("/vistaModulos")
-def getModulosVista():
-    return render_template("modulos.html")
-
-@app.route("/editarCampana")
-def getEditarCampanaVista():
-    return render_template("editarCampana.html")
-
-
-@app.route("/editarModulo")
-def getEditarModuloVista():
-    return render_template("editarModulo.html")
-
-
-@app.route("/vistaCrearModulo")
-def getCrearModulo():
-    return render_template("crearModulo.html")
-
-
-@app.route("/vistaCrearCampana")
-def getCrearCampana():
-    return render_template("crearCampana.html")
-
-
-@app.route("/busquedasServer")
-def getBusquedasVista():
-    return render_template("busquedas.html")
-
-@app.route("/autenticacion")
-def validEmail():
-    email = request.values.get('email')
-    cursor.execute("select * from validgmail where email =%s", (email, ))
-    respuesta=cursor.rowcount != 0
-    return jsonify(respuesta)
-
 @bp.route("/campanas", methods=['GET'])
 def getCampana():  # obtener Campañas de Modulo
-    id = request.values.get('id');
+    id = request.values.get('id')
     idCampana = request.values.get('idCampana')
-    fechaIni = request.values.get('fechaIni');
+    fechaIni = request.values.get('fechaIni')
     if (fechaIni is not None):
         fechaIni = fechaIni.replace('/', '-')
     if(idCampana is not None):
@@ -79,15 +33,15 @@ def getCampana():  # obtener Campañas de Modulo
     else:
         cursor.execute("select * from campana where fechaInicio = %s", (fechaIni,))
     row_headers = [x[0] for x in cursor.description]
-    datos = entidades.util.parseListDateTime(cursor.fetchall())
-    final = entidades.util.parseJSON(row_headers, datos)
+    datos = parseListDateTime(cursor.fetchall())
+    final = parseJSON(row_headers, datos)
     retorno = json.loads(final)
     return jsonify(retorno)
 
 
 @bp.route("/campanas", methods=['POST'])
 def createCampana():  # crear Campaña asociada a Modulo con ID
-    id = request.values.get('id');
+    id = request.values.get('id')
     nombre = request.values.get('nombre')
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
@@ -135,7 +89,7 @@ def getModulo():  # Obtener todos los modulos almacenados en el sistema
         cursor.execute("SELECT * FROM MODULO WHERE nombre= %s", (nombre,))
     headers = [x[0] for x in cursor.description]
     datos = cursor.fetchall()
-    final = entidades.util.parseJSON(headers, datos)
+    final = parseJSON(headers, datos)
     return jsonify(json.loads(final))
 
 
@@ -195,5 +149,24 @@ def updateModulo():  # Actualizar un modulo a partir de su id
     return jsonify(res)
 
 
+# Funciones auxiliares
+def parseJSON(headers, datasource):
+    json_data = []
+    for result in datasource:
+        json_data.append(dict(zip(headers, result)))
+    final = json.dumps(json_data)
+    return final
+
+
+def parseListDateTime(datos):
+    datos = list(datos)
+    datos = [list(x) for x in datos]
+    for x in datos:
+        x[3] = x[3].strftime("%Y-%m-%d");
+        x[4] = x[4].strftime("%Y-%m-%d");
+    return datos
+
+
 app.register_blueprint(bp, url_prefix='/iweb/v1/')
-app.run();
+if __name__ == "__main__":
+    app.run()
