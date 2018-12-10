@@ -305,11 +305,12 @@ app.controller('principalController', function ($scope, $http, $location, $route
         }
     }else{
         //validar email
-        loginFactory.onGoogleLogin();
+        //loginFactory.onGoogleLogin();
     }
     $scope.mensaje = "";
     $scope.error = "";
     $scope.onGoogleLoginBoton = function () {
+        loginFactory.onGoogleLogin();
         onLoadCallback();
     }
 
