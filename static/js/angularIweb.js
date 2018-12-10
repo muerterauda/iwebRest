@@ -704,13 +704,17 @@ app.controller('crearCampanaController', function ($http, $location, $route, $sc
         var url = "http://localhost:5000/iweb/v1/campanas";
 
         var moduloID = $scope.moduloSeleccionado;
-        moduloID = moduloID.id;
+        if(moduloID===''||moduloID===undefined||moduloID===null){
+             $scope.errorCreado="Seleccione un modulo";
+        }else {
+            moduloID = moduloID.id;
+        }
         var nombre = $scope.nombre;
         var fechaIni = $scope.fechaIni;
         var fechaFin = $scope.fechaFin;
         var validformat = /^\d{4}\/\d{2}\/\d{2}$/;
         if (fechaIni == null || fechaFin == null) {
-            $scope.errorCreado = "Rellene el campo de búsqueda"
+            $scope.errorCreado = "Rellene todos los campos"
         } else if (!validformat.test(fechaIni) || !validformat.test(fechaFin)) {
             $scope.errorFecha = "Formato de fechas no válidos"
         } else {
