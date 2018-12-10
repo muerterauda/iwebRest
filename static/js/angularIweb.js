@@ -265,7 +265,7 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
         }
     };
     return $http.get(url, config).then(function (response) {
-        return response.data;
+       return response.data;
     });
     }
     $scope.onGoogleLogin = function () {
@@ -284,15 +284,16 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
                             emailCredentials.setUserName(resp.displayName);
                             emailCredentials.setEmail(resp.emails[0].value);
                             emailCredentials.setId(result.id_token);
-                            if (validEmail(emailCredentials)) {
-                                $scope.Show = true;
-                                $scope.mensaje2 = "Bienvenido, " + emailCredentials.getGmail().email;
-
-                            } else {
-                                $scope.Show = false
-                                $scope.mensaje2 = "Usuario no registrado"
-                            }
-                            $route.reload();
+                            validEmail(emailCredentials).then(function (response) {
+                                if (response!==false) {
+                                    $scope.Show = true;
+                                    $scope.mensaje2 = "Bienvenido, " + emailCredentials.getGmail().email;
+                                } else {
+                                    $scope.Show = false
+                                    $scope.mensaje2 = "Usuario no registrado"
+                                }
+                                $route.reload();
+                            });
                         });
                     });
 
@@ -318,7 +319,7 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
         }
         gapi.auth.setToken(null);
         gapi.auth.signOut();
-        $scope.mensaje2 = emailCredentials.getGmail().username;
+        $scope.mensaje2 = '';
         emailCredentials.setEmail('');
         emailCredentials.setUserName('');
         document.cookie = 'token' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';

@@ -17,11 +17,16 @@
         <div ng-app="appIweb" class="col-12 text-center col-lg-8" ng-controller="loginController">
             <div class="row welcome" ng-show="Show">
                 <div class="text-success col-6">
-                    <h1>{[{ mensaje2 }]}</h1>
+                    <h3>{[{ mensaje2 }]}</h3>
                 </div>
-                <input class="btn btn-danger boton" type="button" ng-click="onGoogleLogout()" value="Cerrar Sesi&oacute;n">
+                <input class="btn btn-danger boton" type="button" ng-show="Show" ng-click="onGoogleLogout()" value="Cerrar Sesi&oacute;n">
             </div>
-            <input class="btn btn-primary row boton" type="button" ng-click="onGoogleLogin()" ng-show="!Show" value="Iniciar Sesi&oacute;n">
+            <div class="row welcome" ng-show="!Show">
+                 <div class="text-danger col-6">
+                    <h3>{[{ mensaje2 }]}</h3>
+                </div>
+            <input class="btn btn-primary row boton" type="button" ng-click="onGoogleLogin()" value="Iniciar Sesi&oacute;n">
+            </div>
             <ng-view>
 
             </ng-view>
