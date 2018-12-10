@@ -29,6 +29,7 @@ var appNasa = angular.module('nasa', []).config(function($interpolateProvider){
 });
 
 appNasa.controller('nasaController', function ($scope, $http, $location) {
+    /*
     var url = "https://api.nasa.gov/planetary/apod?api_key=CvMMimlm8ma5R46WmP33MuVUrJLz4aMxJU0OU9Nt";
     var config={
                 headers: {
@@ -40,7 +41,7 @@ appNasa.controller('nasaController', function ($scope, $http, $location) {
                $scope.iconNasa=nasa.url;
             }, function (response) {
                 $scope.tiempoError="Fallo al conectar con la API de la Nasa";
-            });
+            });*/
 });
 
 app.config(function ($routeProvider) {
@@ -173,8 +174,6 @@ app.factory('mostrarCampanasModulo', function ($http) {
         restablecerCheckbox: restablecerCheckbox
     };
 });
-app.controller('principalController', function ($scope, $http, $location, $route, importarModulo) {
-})
 
 app.factory('emailCredentials', function () {
     var gmail = {
@@ -219,8 +218,7 @@ function validEmail(emailCredentials) {
     return res;
 }
 
-app.controller('loginController', function ($scope, $http, emailCredentials) {
-
+app.controller('loginController', function ($scope, $http, $location,$route,emailCredentials) {
     $scope.onGoogleLogin = function () {
         var params = {
             'clientid': '286209566151-fovn4cmm3nvhsdjo0ns775r8n6ianoqm.apps.googleusercontent.com',
@@ -239,11 +237,13 @@ app.controller('loginController', function ($scope, $http, emailCredentials) {
 
                             if(validEmail(emailCredentials)){
                                 $scope.Show = true;
-                                $scope.mensaje = "Bienvenido, " + emailCredentials.getGmail().username;
+                                $scope.mensaje2 = "Bienvenido, " + emailCredentials.getGmail().username;
+
                             } else {
                                 $scope.Show = false
-                                $scope.mensaje = "Usuario no registrado"
+                                $scope.mensaje2 = "Usuario no registrado"
                             }
+                            $route.reload();
                         });
                     });
 
@@ -269,8 +269,12 @@ app.controller('loginController', function ($scope, $http, emailCredentials) {
         }
         gapi.auth.setToken(null);
         gapi.auth.signOut();
-        $scope.mensaje = emailCredentials.setUserName();    // Esta línea demuestra que se ha realizado el Logout con éxito (no devuelve nada).
+        $scope.mensaje2 = emailCredentials.getGmail().username;
+        emailCredentials.setEmail('');
+        emailCredentials.setUserName('');
         $scope.Show = false;
+        $location.path('/');
+        $route.reload();
     }
 })
 
@@ -281,7 +285,7 @@ app.controller('principalController', function ($scope, $http, $location, $route
     if(validEmail(emailCredentials)){
         $scope.Show = true;
     } else {
-        $scope.Show = false
+        $scope.Show = false;
     }
 
     $scope.verModulos = function () {
@@ -346,7 +350,9 @@ app.controller('principalController', function ($scope, $http, $location, $route
     }
 });
 
-app.controller('modulosController', function ($scope, $http, $location, $route, mostrarCampanasModulo) {
+app.controller('modulosController', function ($scope, $http, $location, $route, mostrarCampanasModulo,emailCredentials) {
+    if(validEmail(emailCredentials)){
+    $scope.Show = true;
     mostrarCampanasModulo.restablecerCheckbox();
     var url = "http://localhost:5000/iweb/v1/modulos";
     var config = {
@@ -362,6 +368,11 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
         $scope.lista = response.data;
     }, function (response) {
     });
+    } else {
+        $scope.Show = false
+        $location.path('/');
+        $route.reload();
+    }
     $scope.cambiarIcono = function (valor, procedencia) {
         if (procedencia === 0) {
             if (valor === $scope.sortType) {
@@ -449,8 +460,9 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
     }
 });
 
-app.controller('editarModuloController', function($scope, $http, $location, $route, $routeParams){
-
+app.controller('editarModuloController', function($scope, $http, $location, $route, $routeParams,emailCredentials){
+if(validEmail(emailCredentials)){
+    $scope.Show = true;
     $scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
 
     var url = "http://localhost:5000/iweb/v1/modulos?id=" + $routeParams.id;
@@ -467,7 +479,11 @@ app.controller('editarModuloController', function($scope, $http, $location, $rou
     }).then(function (response) {
         $scope.modulo = response.data[0];
     });
-
+    } else {
+        $scope.Show = false
+        $location.path('/');
+        $route.reload();
+    }
     $scope.editarModulo = function() {
         var modulo = $scope.modulo;
         if (!modulo.nombre) {
@@ -517,8 +533,9 @@ app.controller('editarModuloController', function($scope, $http, $location, $rou
     };
 });
 
-app.controller('editarCampanaController', function($scope, $http, $location, $route, $routeParams){
-
+app.controller('editarCampanaController', function($scope, $http, $location, $route, $routeParams,emailCredentials){
+if(validEmail(emailCredentials)){
+    $scope.Show = true;
     $scope.errorCreado = $scope.errorFecha = '';
 
     var url = "http://localhost:5000/iweb/v1/campanas?idCampana=" + $routeParams.idCampana;
@@ -538,7 +555,11 @@ app.controller('editarCampanaController', function($scope, $http, $location, $ro
         $scope.fechaIni = response.data[0]['fechaInicio'].replace(/-/g, '/');
         $scope.fechaFin = response.data[0]['fechaFin'].replace(/-/g, '/');
     });
-
+    } else {
+        $scope.Show = false
+        $location.path('/');
+        $route.reload();
+    }
     $scope.editarCampana = function() {
         var fechaIni = $scope.fechaIni;
         var fechaFin = $scope.fechaFin;
@@ -574,13 +595,19 @@ app.controller('editarCampanaController', function($scope, $http, $location, $ro
     };
 });
 
-app.controller('crearModuloController', function ($scope, $http, $location, $route, importarModulo) {
+app.controller('crearModuloController', function ($scope, $http, $location, $route, importarModulo,emailCredentials) {
+    if(validEmail(emailCredentials)){
+    $scope.Show = true;
     var config = {
         headers: {
             'Content-Type': 'application/json;charset=utf-8;'
         }
     };
-
+    } else {
+        $scope.Show = false
+        $location.path('/');
+        $route.reload();
+    }
     $scope.crearModulo = function () {
         var url = "http://localhost:5000/iweb/v1/modulos";
 
@@ -618,7 +645,9 @@ app.controller('crearModuloController', function ($scope, $http, $location, $rou
     };
 });
 
-app.controller('crearCampanaController', function ($http, $location, $route, $scope) {
+app.controller('crearCampanaController', function ($http, $location, $route, $scope,emailCredentials) {
+    if(validEmail(emailCredentials)){
+    $scope.Show = true;
     var config = {
         headers: {
             'Content-Type': 'application/json;charset=utf-8;'
@@ -629,7 +658,11 @@ app.controller('crearCampanaController', function ($http, $location, $route, $sc
         $scope.lista = response.data;
     }, function (response) {
     });
-
+    } else {
+        $scope.Show = false
+        $location.path('/');
+        $route.reload();
+    }
     $scope.crearCampana = function () {
         var url = "http://localhost:5000/iweb/v1/campanas";
 
@@ -662,15 +695,19 @@ app.controller('crearCampanaController', function ($http, $location, $route, $sc
     };
 });
 
-
-app.controller('busquedasController', function ($scope, $http, $location, $route) {
-
+app.controller('busquedasController', function ($scope, $http, $location, $route,emailCredentials) {
+    if(validEmail(emailCredentials)){
+    $scope.Show = true;
     var config = {
         headers: {
             'Content-Type': 'application/json;charset=utf-8;'
         }
     };
-
+    } else {
+        $scope.Show = false
+        $location.path('/');
+        $route.reload();
+    }
     $scope.buscarModulo = function () {
         var nombre = $scope.nombreFiltrar;
         var url = "http://localhost:5000/iweb/v1/modulos";
