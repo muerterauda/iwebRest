@@ -58,6 +58,12 @@ def getCrearCampana():
 def getBusquedasVista():
     return render_template("busquedas.html")
 
+@app.route("/autenticacion")
+def validEmail():
+    email = request.values.get('email')
+    cursor.execute("select * from validgmail where email =%s", (email, ))
+    respuesta=cursor.rowcount != 0
+    return jsonify(respuesta)
 
 @bp.route("/campanas", methods=['GET'])
 def getCampana():  # obtener Campañas de Modulo
@@ -82,14 +88,11 @@ def getCampana():  # obtener Campañas de Modulo
 @bp.route("/campanas", methods=['POST'])
 def createCampana():  # crear Campaña asociada a Modulo con ID
     id = request.values.get('id');
-    print(id)
     nombre = request.values.get('nombre')
-    print(nombre)
     fechaIni = request.values.get('fechaIni')
     fechaFin = request.values.get('fechaFin')
     fechaIni = fechaIni.replace('/', '-')
     fechaFin = fechaFin.replace('/', '-')
-    print(id+nombre+fechaFin+fechaIni)
     valor = True
     numero = cursor.execute("INSERT INTO campana VALUES (0, %s, %s, %s, %s)", (id, nombre, fechaIni, fechaFin,))
     if (numero == 0):
@@ -111,7 +114,7 @@ def updateCampana():  # editar Campaña asociada a Modulo con ID
 
 
 @bp.route("/campanas", methods=['DELETE'])
-def deleteCamapana():  #
+def deleteCampana():  #
     id = request.values.get('id')
     valor = True
     numero = cursor.execute("DELETE FROM campana WHERE id = %s", (id,))
@@ -160,12 +163,10 @@ def createModulo():  # Crear un modulo con sus parametros (opcionales todos meno
             res = False
     return jsonify(res)
 
-
 @bp.route("/modulos", methods=['DELETE'])
 def deleteModulo():  # Eliminar un modulo a partir de su id
     res = True
     id = request.values.get("id")
-    print(id)
     if not id:
         res = False
     else:
