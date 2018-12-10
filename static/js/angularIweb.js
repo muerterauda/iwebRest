@@ -260,7 +260,7 @@ app.controller('loginController', function ($scope, $http, $location, $route, $c
         }
     }
     var validEmail=function( emailCredentials) {
-    url = "http://localhost:5000/autenticacion" + "?email=" + emailCredentials.getGmail().email;
+    url = "http://localhost:5001/iweb/v1/autenticacion" + "?email=" + emailCredentials.getGmail().email;
     var config = {
         headers: {
             'Content-Type': 'application/json;charset=utf-8;'
