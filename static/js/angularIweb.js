@@ -1,30 +1,30 @@
-var app = angular.module('appIweb', ['ngRoute']).config(function ($interpolateProvider) {
+var app = angular.module('appIweb', ['ngRoute', 'ngCookies']).config(function ($interpolateProvider) {
     $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 });
-var appTiempo = angular.module('tiempo', []).config(function($interpolateProvider){
+var appTiempo = angular.module('tiempo', []).config(function ($interpolateProvider) {
     $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 });
 appTiempo.controller('tiempoController', function ($scope, $http, $location) {
     var url = "http://api.openweathermap.org/data/2.5/weather?id=6359472&units=metric&lang=es&appid=aa0461b0def5f676726c39c7ab5336b8";
-    var config={
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8;'
-                }
-             };
-            $http.get(url, config).then(function (response) {
-               var tiempo=response.data;
-               var weather=tiempo.weather;
-                    $scope.descripcion=weather[0].description;
-                    $scope.icon="http://openweathermap.org/img/w/"+weather[0].icon+".png";
-               $scope.main=tiempo.main;
-               $scope.wind=tiempo.wind.speed;
-               $scope.clouds=tiempo.clouds.all;
-               $scope.tiempoError=null;
-            }, function (response) {
-                $scope.tiempoError = "Fallo al conectar con la API del tiempo";
-            });
+    var config = {
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8;'
+        }
+    };
+    $http.get(url, config).then(function (response) {
+        var tiempo = response.data;
+        var weather = tiempo.weather;
+        $scope.descripcion = weather[0].description;
+        $scope.icon = "http://openweathermap.org/img/w/" + weather[0].icon + ".png";
+        $scope.main = tiempo.main;
+        $scope.wind = tiempo.wind.speed;
+        $scope.clouds = tiempo.clouds.all;
+        $scope.tiempoError = null;
+    }, function (response) {
+        $scope.tiempoError = "Fallo al conectar con la API del tiempo";
+    });
 });
-var appNasa = angular.module('nasa', []).config(function($interpolateProvider){
+var appNasa = angular.module('nasa', []).config(function ($interpolateProvider) {
     $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 });
 
@@ -50,23 +50,23 @@ app.config(function ($routeProvider) {
             templateUrl: 'vistaModulos',
             controller: 'modulosController'
         }).when('/editModulo/:id', {
-            templateUrl : 'editarModulo',
-            controller: 'editarModuloController'
-        }).when('/editCampana/:idCampana', {
-            templateUrl : 'editarCampana',
-            controller: 'editarCampanaController'
-        }).when('/busquedas', {
-            templateUrl: 'busquedasServer',
-            controller: 'busquedasController'
-        }).when('/crearModulo', {
-            templateUrl: 'vistaCrearModulo',
-            controller: 'crearModuloController'
-        }).when('/crearCampana', {
-            templateUrl: 'vistaCrearCampana',
-            controller: 'crearCampanaController'
-        }).otherwise({
-            templateUrl: 'principal',
-            controller: 'principalController'
+        templateUrl: 'editarModulo',
+        controller: 'editarModuloController'
+    }).when('/editCampana/:idCampana', {
+        templateUrl: 'editarCampana',
+        controller: 'editarCampanaController'
+    }).when('/busquedas', {
+        templateUrl: 'busquedasServer',
+        controller: 'busquedasController'
+    }).when('/crearModulo', {
+        templateUrl: 'vistaCrearModulo',
+        controller: 'crearModuloController'
+    }).when('/crearCampana', {
+        templateUrl: 'vistaCrearCampana',
+        controller: 'crearCampanaController'
+    }).otherwise({
+        templateUrl: 'principal',
+        controller: 'principalController'
     });
 });
 
@@ -175,10 +175,11 @@ app.factory('mostrarCampanasModulo', function ($http) {
     };
 });
 
-app.factory('emailCredentials', function () {
+app.factory('emailCredentials', function ($cookies) {
     var gmail = {
         username: "",
-        email: ""
+        email: "",
+        id: ""
     };
 
     function setUserName(username) {
@@ -193,11 +194,21 @@ app.factory('emailCredentials', function () {
         return gmail;
     }
 
+    function setId(id) {
+        $cookies.put('token', id);
+        gmail.id = id;
+    }
+
+    function getCookie() {
+        return $cookies.get('token');
+    }
+
     return {
         setUserName: setUserName,
         setEmail: setEmail,
         getGmail: getGmail,
-
+        setId: setId,
+        getCookie: getCookie
     };
 });
 
@@ -209,35 +220,78 @@ function validEmail(emailCredentials) {
     var email5 = "paulatulipan@gmail.com";
 
 
-    var res =   emailCredentials.getGmail().email.localeCompare(email1) === 0 ||
-                emailCredentials.getGmail().email.localeCompare(email2) === 0 ||
-                emailCredentials.getGmail().email.localeCompare(email3) === 0 ||
-                emailCredentials.getGmail().email.localeCompare(email4) === 0 ||
-                emailCredentials.getGmail().email.localeCompare(email5) === 0;
+    var res = emailCredentials.getGmail().email.localeCompare(email1) === 0 ||
+        emailCredentials.getGmail().email.localeCompare(email2) === 0 ||
+        emailCredentials.getGmail().email.localeCompare(email3) === 0 ||
+        emailCredentials.getGmail().email.localeCompare(email4) === 0 ||
+        emailCredentials.getGmail().email.localeCompare(email5) === 0;
 
     return res;
 }
 
-app.controller('loginController', function ($scope, $http, $location,$route,emailCredentials) {
+app.controller('loginController', function ($scope, $http, $location, $route, $cookies, emailCredentials) {
+    if (emailCredentials.getGmail().email === '') {
+        var cook = emailCredentials.getCookie();
+        if (cook !== '' && cook !== undefined) {
+            var url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + cook;
+            $http.get(url).then(function (response) {
+                if (response.data.email_verified === "true") {
+                    emailCredentials.setEmail(response.data.email);
+                    if (validEmail(emailCredentials)) {
+                        $scope.Show = true;
+                        $scope.mensaje2 = "Bienvenido, " + emailCredentials.getGmail().email;
+                        $route.reload();
+                    } else {
+                        document.cookie = 'token' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                        $scope.Show = false;
+                        $location.path('/');
+                        $route.reload();
+                    }
+                } else {
+                    document.cookie = 'token' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                    $scope.Show = false;
+                    $location.path('/');
+                    $route.reload();
+                }
+            }, function (response) {
+                document.cookie = 'token' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                $scope.Show = false;
+                $location.path('/');
+                $route.reload();
+            });
+        }else{
+            $scope.Show = false;
+            $location.path('/');
+            $route.reload();
+        }
+    }else{
+        if (validEmail(emailCredentials)) {
+            $scope.Show = true;
+        }else{
+            $scope.Show = false;
+            $location.path('/');
+            $route.reload();
+        }
+    }
     $scope.onGoogleLogin = function () {
         var params = {
             'clientid': '286209566151-fovn4cmm3nvhsdjo0ns775r8n6ianoqm.apps.googleusercontent.com',
             'cookiepolicy': 'single_host_origin',
             'callback': function (result) {
-                if(result['status']['signed_in']){
+                if (result['status']['signed_in']) {
                     var request = gapi.client.plus.people.get(
                         {
                             'userId': 'me'
                         }
                     );
-                    request.execute(function(resp){
-                        $scope.$apply(function(){
+                    request.execute(function (resp) {
+                        $scope.$apply(function () {
                             emailCredentials.setUserName(resp.displayName);
                             emailCredentials.setEmail(resp.emails[0].value);
-
-                            if(validEmail(emailCredentials)){
+                            emailCredentials.setId(result.id_token);
+                            if (validEmail(emailCredentials)) {
                                 $scope.Show = true;
-                                $scope.mensaje2 = "Bienvenido, " + emailCredentials.getGmail().username;
+                                $scope.mensaje2 = "Bienvenido, " + emailCredentials.getGmail().email;
 
                             } else {
                                 $scope.Show = false
@@ -272,22 +326,22 @@ app.controller('loginController', function ($scope, $http, $location,$route,emai
         $scope.mensaje2 = emailCredentials.getGmail().username;
         emailCredentials.setEmail('');
         emailCredentials.setUserName('');
+        document.cookie = 'token' + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         $scope.Show = false;
         $location.path('/');
         $route.reload();
     }
-})
+});
 
 app.controller('principalController', function ($scope, $http, $location, $route, importarModulo, emailCredentials) {
 
     $scope.mensaje = "";
     $scope.error = "";
-    if(validEmail(emailCredentials)){
+    if (validEmail(emailCredentials)) {
         $scope.Show = true;
     } else {
         $scope.Show = false;
     }
-
     $scope.verModulos = function () {
         $location.path('/modulos');
         $route.reload();
@@ -350,29 +404,23 @@ app.controller('principalController', function ($scope, $http, $location, $route
     }
 });
 
-app.controller('modulosController', function ($scope, $http, $location, $route, mostrarCampanasModulo,emailCredentials) {
-    if(validEmail(emailCredentials)){
-    $scope.Show = true;
-    mostrarCampanasModulo.restablecerCheckbox();
-    var url = "http://localhost:5000/iweb/v1/modulos";
-    var config = {
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8;'
-        }
-    };
-    $scope.sortType = 'nombre';
-    $scope.sortReverse = false;
-    $scope.sortTypeC = 'id';
-    $scope.sortReverseC = false;
-    $http.get(url, config).then(function (response) {
-        $scope.lista = response.data;
-    }, function (response) {
-    });
-    } else {
-        $scope.Show = false
-        $location.path('/');
-        $route.reload();
-    }
+app.controller('modulosController', function ($scope, $http, $location, $route, mostrarCampanasModulo, emailCredentials) {
+        mostrarCampanasModulo.restablecerCheckbox();
+        var url = "http://localhost:5000/iweb/v1/modulos";
+        var config = {
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8;'
+            }
+        };
+        $scope.sortType = 'nombre';
+        $scope.sortReverse = false;
+        $scope.sortTypeC = 'id';
+        $scope.sortReverseC = false;
+        $http.get(url, config).then(function (response) {
+            $scope.lista = response.data;
+        }, function (response) {
+        });
+
     $scope.cambiarIcono = function (valor, procedencia) {
         if (procedencia === 0) {
             if (valor === $scope.sortType) {
@@ -409,8 +457,8 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
         $location.path('/crearModulo');
         $route.reload();
     };
-    $scope.editarModulo = function(id) {
-        $location.path('/editModulo/'+id);
+    $scope.editarModulo = function (id) {
+        $location.path('/editModulo/' + id);
         $route.reload();
     };
     $scope.borrarModulo = function (id) {
@@ -455,36 +503,36 @@ app.controller('modulosController', function ($scope, $http, $location, $route, 
         $route.reload();
     };
     $scope.editarCampana = function (id) {
-        $location.path('/editCampana/'+id);
+        $location.path('/editCampana/' + id);
         $route.reload();
     }
 });
 
-app.controller('editarModuloController', function($scope, $http, $location, $route, $routeParams,emailCredentials){
-if(validEmail(emailCredentials)){
-    $scope.Show = true;
-    $scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
+app.controller('editarModuloController', function ($scope, $http, $location, $route, $routeParams, emailCredentials) {
+    if (validEmail(emailCredentials)) {
+        $scope.Show = true;
+        $scope.erroNombre = $scope.errorAlfa = $scope.errorBeta = $scope.errorGamma = $scope.errorKappa = $scope.errorOperacion = '';
 
-    var url = "http://localhost:5000/iweb/v1/modulos?id=" + $routeParams.id;
-    var config={
-        headers:{
-            'Content-Type': 'application/json;charset=utf-8;'
-        }
-    };
+        var url = "http://localhost:5000/iweb/v1/modulos?id=" + $routeParams.id;
+        var config = {
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8;'
+            }
+        };
 
-    $http({
-        url: url,
-        method: "GET",
-        config: config,
-    }).then(function (response) {
-        $scope.modulo = response.data[0];
-    });
+        $http({
+            url: url,
+            method: "GET",
+            config: config,
+        }).then(function (response) {
+            $scope.modulo = response.data[0];
+        });
     } else {
         $scope.Show = false
         $location.path('/');
         $route.reload();
     }
-    $scope.editarModulo = function() {
+    $scope.editarModulo = function () {
         var modulo = $scope.modulo;
         if (!modulo.nombre) {
             $scope.errorNombre = 'El campo no puede estar vacío.';
@@ -533,34 +581,34 @@ if(validEmail(emailCredentials)){
     };
 });
 
-app.controller('editarCampanaController', function($scope, $http, $location, $route, $routeParams,emailCredentials){
-if(validEmail(emailCredentials)){
-    $scope.Show = true;
-    $scope.errorCreado = $scope.errorFecha = '';
+app.controller('editarCampanaController', function ($scope, $http, $location, $route, $routeParams, emailCredentials) {
+    if (validEmail(emailCredentials)) {
+        $scope.Show = true;
+        $scope.errorCreado = $scope.errorFecha = '';
 
-    var url = "http://localhost:5000/iweb/v1/campanas?idCampana=" + $routeParams.idCampana;
-    var config={
-        headers:{
-            'Content-Type': 'application/json;charset=utf-8;'
-        }
-    };
+        var url = "http://localhost:5000/iweb/v1/campanas?idCampana=" + $routeParams.idCampana;
+        var config = {
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8;'
+            }
+        };
 
-    var validformat = /^\d{4}\/\d{2}\/\d{2}$/;
+        var validformat = /^\d{4}\/\d{2}\/\d{2}$/;
 
-    $http({
-        url: url,
-        method: "GET",
-        config: config,
-    }).then(function (response) {
-        $scope.fechaIni = response.data[0]['fechaInicio'].replace(/-/g, '/');
-        $scope.fechaFin = response.data[0]['fechaFin'].replace(/-/g, '/');
-    });
+        $http({
+            url: url,
+            method: "GET",
+            config: config,
+        }).then(function (response) {
+            $scope.fechaIni = response.data[0]['fechaInicio'].replace(/-/g, '/');
+            $scope.fechaFin = response.data[0]['fechaFin'].replace(/-/g, '/');
+        });
     } else {
         $scope.Show = false
         $location.path('/');
         $route.reload();
     }
-    $scope.editarCampana = function() {
+    $scope.editarCampana = function () {
         var fechaIni = $scope.fechaIni;
         var fechaFin = $scope.fechaFin;
         if (!fechaIni || !fechaFin) {
@@ -595,14 +643,14 @@ if(validEmail(emailCredentials)){
     };
 });
 
-app.controller('crearModuloController', function ($scope, $http, $location, $route, importarModulo,emailCredentials) {
-    if(validEmail(emailCredentials)){
-    $scope.Show = true;
-    var config = {
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8;'
-        }
-    };
+app.controller('crearModuloController', function ($scope, $http, $location, $route, importarModulo, emailCredentials) {
+    if (validEmail(emailCredentials)) {
+        $scope.Show = true;
+        var config = {
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8;'
+            }
+        };
     } else {
         $scope.Show = false
         $location.path('/');
@@ -645,19 +693,19 @@ app.controller('crearModuloController', function ($scope, $http, $location, $rou
     };
 });
 
-app.controller('crearCampanaController', function ($http, $location, $route, $scope,emailCredentials) {
-    if(validEmail(emailCredentials)){
-    $scope.Show = true;
-    var config = {
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8;'
-        }
-    };
+app.controller('crearCampanaController', function ($http, $location, $route, $scope, emailCredentials) {
+    if (validEmail(emailCredentials)) {
+        $scope.Show = true;
+        var config = {
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8;'
+            }
+        };
 
-    $http.get("http://localhost:5000/iweb/v1/modulos", config).then(function (response) {
-        $scope.lista = response.data;
-    }, function (response) {
-    });
+        $http.get("http://localhost:5000/iweb/v1/modulos", config).then(function (response) {
+            $scope.lista = response.data;
+        }, function (response) {
+        });
     } else {
         $scope.Show = false
         $location.path('/');
@@ -695,14 +743,14 @@ app.controller('crearCampanaController', function ($http, $location, $route, $sc
     };
 });
 
-app.controller('busquedasController', function ($scope, $http, $location, $route,emailCredentials) {
-    if(validEmail(emailCredentials)){
-    $scope.Show = true;
-    var config = {
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8;'
-        }
-    };
+app.controller('busquedasController', function ($scope, $http, $location, $route, emailCredentials) {
+    if (validEmail(emailCredentials)) {
+        $scope.Show = true;
+        var config = {
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8;'
+            }
+        };
     } else {
         $scope.Show = false
         $location.path('/');
